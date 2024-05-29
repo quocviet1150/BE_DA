@@ -65,7 +65,11 @@ public class AccountDaoImpl implements AccountDao{
 	public Optional<Account> findByUsername(String username) {
 		return accountRepository.findByUsername(username);
 	}
-	
-	
+
+	@Override
+	public Account getAccountByEmail(String email) {
+		return accountRepository.getAccountByEmail(email);
+	}
+
 
 }

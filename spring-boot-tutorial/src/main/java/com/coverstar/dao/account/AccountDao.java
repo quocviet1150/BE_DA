@@ -12,5 +12,6 @@ public interface AccountDao extends IOperations<Account> {
 	Optional<Account> findByEmail(String email);
 
 	Optional<Account> findByUsername(String username);
-	
+
+	Account getAccountByEmail(String email);
 }

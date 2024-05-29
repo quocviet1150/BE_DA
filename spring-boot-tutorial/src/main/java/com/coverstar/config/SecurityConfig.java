@@ -1,5 +1,7 @@
 package com.coverstar.config;
 
+import com.coverstar.config.oauth2.CustomOAuth2AccountService;
+import com.coverstar.config.oauth2.OAuth2LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -21,37 +23,54 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	@Lazy
-	private CustomUserDetailsService userDetailsService;
+    @Autowired
+    @Lazy
+    private CustomUserDetailsService userDetailsService;
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf()
-			.disable()
-			.authorizeRequests()
-			.antMatchers("/admin").hasAnyRole("ADMIN")
-			.antMatchers("/webjars/**", "/peritable/**",
-					"/sign-up/**", "/verify-code/**",
-					"/sign-in/**","/assets/**").permitAll()
-			.anyRequest().authenticated();
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf()
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/admin").hasAnyRole("ADMIN")
+                .antMatchers("/webjars/**", "/peritable/**",
+                        "/sign-up/**", "/verify-code/**",
+                        "/sign-in/**", "/assets/**", "/login/oauth2/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
+//                .loginPage("/")
+                .userInfoEndpoint().userService(oAuth2AccountService)
+                .and()
+                .successHandler(oAuth2LoginSuccessHandler)
+                .and()
+                .logout().permitAll()
+//                .and()
+//                .rememberMe().tokenRepository(persis)
+        ;
 
-	}
+    }
 
-	@Bean
-	public static PasswordEncoder bCryptPasswordEncoder(){
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public static PasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public AuthenticationManager authenticationManager(
-			AuthenticationConfiguration configuration) throws Exception {
-		return configuration.getAuthenticationManager();
-	}
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Autowired
+    private CustomOAuth2AccountService oAuth2AccountService;
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
 }
