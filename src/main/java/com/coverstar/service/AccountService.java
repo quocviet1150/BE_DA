@@ -1,5 +1,6 @@
 package com.coverstar.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,7 +21,7 @@ public interface AccountService {
 	
 	Optional<Account> findById(Long id);
 	
-	public void verifyCode(VerifyCodeDto verifyCodeDto);
+	void verifyCode(VerifyCodeDto verifyCodeDto);
 
     void changePassword(String username, String newPassword);
 
@@ -31,4 +32,6 @@ public interface AccountService {
 	Map<String, String> authenticateUser(LoginDto loginDto);
 
 	void unlockAccount(String usernameOrEmail);
+
+	List<Account> getAllAccount();
 }

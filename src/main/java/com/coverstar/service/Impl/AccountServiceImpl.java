@@ -9,6 +9,7 @@ import com.coverstar.dto.*;
 import com.coverstar.entity.Account;
 import com.coverstar.entity.Role;
 import com.coverstar.entity.VerifyAccount;
+import com.coverstar.repository.AccountRepository;
 import com.coverstar.service.AccountService;
 import com.coverstar.service.RoleService;
 import io.jsonwebtoken.Jwts;
@@ -48,6 +49,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public Map<String, String> authenticateUser(LoginDto loginDto) {
@@ -174,7 +178,6 @@ public class AccountServiceImpl implements AccountService {
     public void verifyCode(VerifyCodeDto verifyCodeDto) {
 
         String token = verifyCodeDto.getToken();
-
         VerifyAccount verifyAccount = verifyAccountDao.findByToken(token).get();
         Account account = verifyAccount.getAccount();
         account.setActive(true);
@@ -308,5 +311,10 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<Account> getAllAccount() {
+        return accountRepository.findAll();
     }
 }

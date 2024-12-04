@@ -1,13 +1,11 @@
 package com.coverstar.controller;
 
 import com.coverstar.constant.Constants;
-import com.coverstar.dto.AccountCreateDto;
-import com.coverstar.dto.ChangePasswordDto;
-import com.coverstar.dto.LoginDto;
-import com.coverstar.dto.VerifyCodeDto;
+import com.coverstar.dto.*;
 import com.coverstar.entity.Account;
 import com.coverstar.service.AccountService;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -123,6 +122,28 @@ public class AccountController {
             return ResponseEntity.ok("Account unlocked successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error unlocking account");
+        }
+    }
+
+    @GetMapping("/account/{id}")
+    public ResponseEntity<?> getAccount(@PathVariable Long id) {
+        try {
+            Account account = accountService.findById(id).orElseThrow(() -> new Exception("Account not found"));
+            ModelMapper modelMapper = new ModelMapper();
+            AccountUpdateDto accountCreateDto = modelMapper.map(account, AccountUpdateDto.class);
+            return ResponseEntity.ok(accountCreateDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+        }
+    }
+
+    @GetMapping("/admin/getAll")
+    public ResponseEntity<?> getAllAccount() {
+        try {
+            List<Account> accounts = accountService.getAllAccount();
+            return ResponseEntity.ok(accounts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting all account");
         }
     }
 }
