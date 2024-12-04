@@ -29,4 +29,6 @@ public interface AccountService {
 	void forgotPassword(String usernameOrEmail);
 
 	Map<String, String> authenticateUser(LoginDto loginDto);
+
+	void unlockAccount(String usernameOrEmail);
 }

@@ -111,4 +111,18 @@ public class AccountController {
     public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
         return oAuth2User.getAttributes();
     }
+
+    @PostMapping("/unlock-account/{usernameOrEmail}")
+    public ResponseEntity<?> unlockAccount(@PathVariable String usernameOrEmail) {
+        try {
+            if (StringUtils.isBlank(usernameOrEmail)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("usernameOrEmail is required");
+            }
+
+            accountService.unlockAccount(usernameOrEmail);
+            return ResponseEntity.ok("Account unlocked successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error unlocking account");
+        }
+    }
 }

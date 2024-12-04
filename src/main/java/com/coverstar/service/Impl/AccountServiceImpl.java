@@ -178,6 +178,8 @@ public class AccountServiceImpl implements AccountService {
         VerifyAccount verifyAccount = verifyAccountDao.findByToken(token).get();
         Account account = verifyAccount.getAccount();
         account.setActive(true);
+        account.setCountLock(0);
+        account.setLocked(false);
         accountDao.update(account);
     }
 
@@ -294,6 +296,17 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    @Override
+    public void unlockAccount(String usernameOrEmail) {
+        try {
+            Account account = getEmailOrUser(usernameOrEmail);
+            account.setActive(false);
+            sendEmail(account);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
