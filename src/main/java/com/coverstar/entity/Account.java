@@ -1,6 +1,7 @@
 package com.coverstar.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,49 +25,70 @@ import java.util.Set;
 @Table(name = "USERS")
 @Getter
 @Setter
-public class Account implements Serializable{
+@NoArgsConstructor
+public class Account implements Serializable {
 
-	private static final long serialVersionUID = -2460659701384032012L;
+    private static final long serialVersionUID = -2460659701384032012L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "USERNAME", length = 100, unique = true)
-	private String username;
+    @Column(name = "USERNAME", length = 100, unique = true)
+    private String username;
 
-	@Column(name = "EMAIL", length = 100, unique = true)
-	private String email;
+    @Column(name = "EMAIL", length = 100, unique = true)
+    private String email;
 
-	@Column(name = "PASSWORD")
-	private String password;
+    @Column(name = "PASSWORD", nullable = false)
+    private String password;
 
-	@Column(name = "FIRSTNAME")
-	private String firstName;
+    @Column(name = "FIRSTNAME", nullable = false)
+    private String firstName;
 
-	@Column(name = "LASTNAME")
-	private String lastName;
-	
-	@Column(name = "is_active")
-	private boolean active;
+    @Column(name = "LASTNAME", nullable = false)
+    private String lastName;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "user_role", joinColumns = {
-			@JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private Set<Role> roles;
+    @Column(name = "is_active", nullable = false)
+    private boolean active;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL)
-	private Set<VerifyAccount> verifyAccounts;
+    @Column(name = "is_locked", nullable = false)
+    private boolean locked;
 
-	public Account() {
+    @Column(name = "CREATED_DATE")
+    private Date createdDate;
 
-	}
+    @Column(name = "UPDATED_DATE")
+    private Date updatedDate;
 
-	public Set<Role> addRole(Role role) {
-		if(roles == null) {
-			roles = new HashSet<Role>();
-		}
-		roles.add(role);
-		return roles;
-	}
+    @Column(name = "DATE_OF_BIRTH")
+    private Date dateOfBirth;
+
+    @Column(name = "SEX")
+    private Integer sex;
+
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
+
+    @Column(name = "directory_path")
+    private String directoryPath;
+
+    @Column(name = "COUNT_LOCK")
+    private Integer countLock;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role", joinColumns = {
+            @JoinColumn(name = "user_id", referencedColumnName = "id")}, inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<VerifyAccount> verifyAccounts;
+
+    public Set<Role> addRole(Role role) {
+        if (roles == null) {
+            roles = new HashSet<Role>();
+        }
+        roles.add(role);
+        return roles;
+    }
 }

@@ -1,8 +1,10 @@
 package com.coverstar.service;
 
+import java.util.Map;
 import java.util.Optional;
 
 import com.coverstar.dto.AccountCreateDto;
+import com.coverstar.dto.LoginDto;
 import com.coverstar.dto.VerifyCodeDto;
 import com.coverstar.entity.Account;
 
@@ -25,4 +27,6 @@ public interface AccountService {
 	boolean checkPassword(String username, String oldPassword);
 
 	void forgotPassword(String usernameOrEmail);
+
+	Map<String, String> authenticateUser(LoginDto loginDto);
 }
