@@ -5,26 +5,28 @@ import com.coverstar.component.mail.MailService;
 import com.coverstar.constant.RandomUtil;
 import com.coverstar.dao.account.AccountDao;
 import com.coverstar.dao.verify_account.VerifyAccountDao;
-import com.coverstar.dto.AccountCreateDto;
-import com.coverstar.dto.VerifyCodeDto;
+import com.coverstar.dto.*;
 import com.coverstar.entity.Account;
 import com.coverstar.entity.Role;
 import com.coverstar.entity.VerifyAccount;
 import com.coverstar.service.AccountService;
 import com.coverstar.service.RoleService;
-import org.apache.commons.lang3.StringUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
+import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -44,15 +46,77 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Override
-    public Account createMember(AccountCreateDto accountDto) throws MessagingException {
+    public Map<String, String> authenticateUser(LoginDto loginDto) {
+        try {
+
+            Account account = getEmailOrUser(loginDto.getUsernameOrEmail());
+
+            if (account.isLocked()) {
+                throw new BadCredentialsException("Account is locked");
+            }
+
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            String role = authorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .findFirst()
+                    .orElse(null);
+            SecretKey KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            String token = Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                    .claim("role", role)
+                    .signWith(SignatureAlgorithm.HS256, KEY).compact();
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("username", userDetails.getUsername());
+            response.put("role", role);
+            response.put("firstName", userDetails.getFirstName());
+            response.put("lastName", userDetails.getLastName());
+            return response;
+        } catch (Exception e) {
+            try {
+                Account account = getEmailOrUser(loginDto.getUsernameOrEmail());
+                if (account.getCountLock() == null) {
+                    account.setCountLock(0);
+                }
+                int newCountLock = account.getCountLock() + 1;
+
+                if (newCountLock >= 5) {
+                    account.setLocked(true);
+                }
+                account.setCountLock(newCountLock);
+                accountDao.update(account);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public Account createMember(AccountCreateDto accountDto) throws Exception {
 
         String email = accountDto.getEmail();
         String username = accountDto.getUsername();
         String password = accountDto.getPassword();
         String firstName = accountDto.getFirstName();
         String lastName = accountDto.getLastName();
+
+        if (accountDao.findByEmail(email).isPresent()) {
+            throw new Exception("Email already exists");
+        }
+
+        if (accountDao.findByUsername(username).isPresent()) {
+            throw new Exception("Username already exists");
+        }
 
         Account account = new Account();
         account.setEmail(email);
@@ -61,6 +125,9 @@ public class AccountServiceImpl implements AccountService {
         account.setLastName(lastName);
         account.setPassword(passwordEncoder.encode(password));
         account.setActive(false);
+        account.setLocked(false);
+        account.setCreatedDate(new Date());
+        account.setUpdatedDate(new Date());
 
         if (roleService.findById(2l).isPresent()) {
             Role role = roleService.findById(2l).get();
@@ -116,14 +183,7 @@ public class AccountServiceImpl implements AccountService {
 
     public boolean checkPassword(String userNameOrEmail, String oldPassword) {
         try {
-            String username = StringUtils.EMPTY;
-            String email = StringUtils.EMPTY;
-            if (userNameOrEmail.contains("@")) {
-                email = userNameOrEmail;
-            } else {
-                username = userNameOrEmail;
-            }
-            Account account = accountDao.findByUsernameOrEmail(username, email).orElseThrow(() -> new RuntimeException("User not found"));
+            Account account = getEmailOrUser(userNameOrEmail);
             return passwordEncoder.matches(oldPassword, account.getPassword());
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,14 +192,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void changePassword(String userNameOrEmail, String newPassword) {
-        String username = StringUtils.EMPTY;
-        String email = StringUtils.EMPTY;
-        if (userNameOrEmail.contains("@")) {
-            email = userNameOrEmail;
-        } else {
-            username = userNameOrEmail;
-        }
-        Account account = accountDao.findByUsernameOrEmail(username, email).orElseThrow(() -> new RuntimeException("User not found"));
+        Account account = getEmailOrUser(userNameOrEmail);
         account.setPassword(passwordEncoder.encode(newPassword));
         account.setActive(false);
         sendEmail(account);
@@ -175,15 +228,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void forgotPassword(String usernameOrEmail) {
         try {
-            String username = StringUtils.EMPTY;
-            String email = StringUtils.EMPTY;
-            if (usernameOrEmail.contains("@")) {
-                email = usernameOrEmail;
-            } else {
-                username = usernameOrEmail;
-            }
+            Account account = getEmailOrUser(usernameOrEmail);
             String password = generateRandomPassword();
-            Account account = accountDao.findByUsernameOrEmail(username, email).orElseThrow(() -> new RuntimeException("User not found"));
             account.setPassword(passwordEncoder.encode(password));
             accountDao.update(account);
             VerifyAccount verifyAccount = new VerifyAccount();
@@ -234,4 +280,20 @@ public class AccountServiceImpl implements AccountService {
         return password.toString();
     }
 
+    private Account getEmailOrUser(String usernameOrEmail) {
+        try {
+            EmailOrUser emailOrUser = new EmailOrUser();
+            if (usernameOrEmail.contains("@")) {
+                emailOrUser.setEmail(usernameOrEmail);
+            } else {
+                emailOrUser.setUsername(usernameOrEmail);
+            }
+            Account account = accountDao.findByUsernameOrEmail(emailOrUser.getUsername(),
+                    emailOrUser.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+            return account;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }
