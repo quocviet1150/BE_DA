@@ -33,10 +33,14 @@ public class Brand {
     private String directoryPath;
 
     @Column(name = "created_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "type")
+    private Integer type;
 }

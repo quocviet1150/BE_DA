@@ -1,12 +1,12 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.dto.BrandSearchDto;
 import com.coverstar.entity.Brand;
 import com.coverstar.entity.Product;
 import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class BrandServiceImpl implements BrandService {
     private String imageDirectory;
 
     @Override
-    public Brand createOrUpdateBrand(Long id, String name, MultipartFile imageFile) throws Exception {
+    public Brand createOrUpdateBrand(Long id, String name, MultipartFile imageFile, String description, Integer type) throws Exception {
         Brand brand = new Brand();
         try {
             boolean isNameExist = id == null
@@ -47,12 +49,14 @@ public class BrandServiceImpl implements BrandService {
             if (id != null) {
                 brand = brandRepository.findById(id).orElse(null);
                 brand.setUpdatedDate(new Date());
-                brand.setStatus(true);
             } else {
                 brand.setCreatedDate(new Date());
-                brand.setStatus(true);
+                brand.setUpdatedDate(new Date());
             }
+            brand.setStatus(true);
             brand.setName(name);
+            brand.setDescription(description);
+            brand.setType(type);
             brand = brandRepository.save(brand);
 
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -74,22 +78,22 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public List<Brand> searchBrand(String name) {
-        List<Brand> brands;
+    public List<Brand> searchBrand(BrandSearchDto brandSearchDto) {
         try {
-            String nameValue = name != null ? name : StringUtils.EMPTY;
-            brands = brandRepository.findAllByStatus(nameValue);
+            String name = brandSearchDto.getName();
+            Boolean status = brandSearchDto.getStatus();
+            Integer type = brandSearchDto.getType();
+            return brandRepository.findBrandsByConditions(name, status, type);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-        return brands;
     }
 
     @Override
-    public Brand getBrand(Long id) {
+    public Brand getBrand(Long id,Integer type) {
         try {
-            return brandRepository.findById(id).orElse(null);
+            return brandRepository.findByIdAndType(id, type);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

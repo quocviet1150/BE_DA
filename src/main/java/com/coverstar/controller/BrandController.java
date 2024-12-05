@@ -1,6 +1,7 @@
 package com.coverstar.controller;
 
 import com.coverstar.constant.Constants;
+import com.coverstar.dto.BrandSearchDto;
 import com.coverstar.entity.Brand;
 import com.coverstar.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,11 @@ public class BrandController {
     @PostMapping("/createOrUpdateBrand")
     public ResponseEntity<?> createOrComment(@RequestParam(value = "id", required = false) Long id,
                                              @RequestParam("name") String name,
-                                             @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
+                                             @RequestParam(value = "file", required = false) MultipartFile imageFiles,
+                                             @RequestParam("description") String description,
+                                             @RequestParam("type") Integer type) {
         try {
-            Brand brand = brandService.createOrUpdateBrand(id, name, imageFiles);
+            Brand brand = brandService.createOrUpdateBrand(id, name, imageFiles, description, type);
             return ResponseEntity.ok(brand);
         } catch (Exception e) {
             if (e.getMessage().equals("Brand name already exists")) {
@@ -34,19 +37,23 @@ public class BrandController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchBrand(@RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<?> searchBrand(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(required = false) Integer type) {
         try {
-            List<Brand> brands = brandService.searchBrand(name);
+            BrandSearchDto brandSearchDto = new BrandSearchDto(name, status, type);
+            List<Brand> brands = brandService.searchBrand(brandSearchDto);
             return ResponseEntity.ok(brands);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
 
-    @GetMapping("/getBrand/{id}")
-    public ResponseEntity<?> getBrand(@PathVariable Long id) {
+    @GetMapping("/getBrand/{id}/{type}")
+    public ResponseEntity<?> getBrand(@PathVariable Long id, @PathVariable Integer type) {
         try {
-            Brand brand = brandService.getBrand(id);
+            Brand brand = brandService.getBrand(id, type);
             return ResponseEntity.ok(brand);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);

@@ -35,7 +35,6 @@ public class AccountController {
             if (e.getMessage().equals("Email already exists")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
             }
-
             if (e.getMessage().equals("Username already exists")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
             }
@@ -45,11 +44,9 @@ public class AccountController {
 
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCodeAction(@Valid @RequestBody VerifyCodeDto verifyCodeDto, BindingResult result) {
-
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-
         try {
             accountService.verifyCode(verifyCodeDto);
             return ResponseEntity.ok(Constants.VALID_VERIFICATION);
