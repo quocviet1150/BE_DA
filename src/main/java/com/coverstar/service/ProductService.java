@@ -18,8 +18,7 @@ public interface ProductService {
                                 String color,
                                 String description,
                                 List<MultipartFile> imageFiles,
-                                List<Long> imageIdsToRemove,
-                                List<Long> discountIds) throws Exception;
+                                List<Long> imageIdsToRemove) throws Exception;
 
     List<Product> findByNameAndPriceRange(Long brandId,
             String name,

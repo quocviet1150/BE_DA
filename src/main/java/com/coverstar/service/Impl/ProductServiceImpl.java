@@ -38,9 +38,6 @@ public class ProductServiceImpl implements ProductService {
     @Value("${image.directory}")
     private String imageDirectory;
 
-    @Autowired
-    private DiscountRepository discountRepository;
-
     @Override
     public Product saveOrUpdateProduct(Long id,
                                        String productName,
@@ -50,8 +47,7 @@ public class ProductServiceImpl implements ProductService {
                                        String color,
                                        String description,
                                        List<MultipartFile> imageFiles,
-                                       List<Long> imageIdsToRemove,
-                                       List<Long> discountIds) throws Exception {
+                                       List<Long> imageIdsToRemove) throws Exception {
         try {
             Product product;
             if (id != null) {
@@ -79,18 +75,6 @@ public class ProductServiceImpl implements ProductService {
                     imageRepository.deleteById(imageId);
                 }
             }
-
-            if (discountIds != null && !discountIds.isEmpty()) {
-                Set<Discount> discounts = new HashSet<>();
-                for (Long discountId : discountIds) {
-                    Discount discount = discountRepository.findById(discountId).orElse(null);
-                    if (discount != null) {
-                        discounts.add(discount);
-                    }
-                }
-                product.setDiscounts(discounts);
-            }
-
             product = productRepository.save(product);
             return saveImageProduct(imageFiles, product);
         } catch (Exception e) {

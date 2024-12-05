@@ -73,12 +73,4 @@ public class Product {
 
     @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Comment> comments;
-
-    @ManyToMany
-    @JoinTable(
-            name = "product_discount",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "discount_id")
-    )
-    private Set<Discount> discounts;
 }

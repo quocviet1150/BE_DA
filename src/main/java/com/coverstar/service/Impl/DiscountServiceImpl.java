@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public Discount createOrUpdateDiscount(Long id, String name, String code,
-                                           String description, Integer percent, MultipartFile imageFile) throws Exception {
+                                           String description, BigDecimal percent, MultipartFile imageFile,
+                                           String expiredDate) throws Exception {
         Discount discount = new Discount();
         try {
 
@@ -49,6 +51,7 @@ public class DiscountServiceImpl implements DiscountService {
             discount.setCode(code);
             discount.setPercent(percent);
             discount.setDescription(description);
+            discount.setExpiredDate(new Date(Long.parseLong(expiredDate)));
             discount = discountRepository.save(discount);
 
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -70,11 +73,13 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     @Override
-    public List<Discount> searchDiscount(String name) {
+    public List<Discount> searchDiscount(String name, Boolean status, String code) {
         List<Discount> discounts;
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
-            discounts = discountRepository.findAllByStatus(nameValue);
+            Boolean statusValue = status != null ? status : null;
+            String codeValue = code != null ? code : StringUtils.EMPTY;
+            discounts = discountRepository.findAllByStatus(nameValue, statusValue, codeValue);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

@@ -11,8 +11,10 @@ import java.util.List;
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
-    @Query("SELECT a FROM Discount a WHERE a.name LIKE CONCAT('%', :name, '%')  AND a.status = true")
-    List<Discount> findAllByStatus(String name);
+    @Query("SELECT a FROM Discount a " +
+            "WHERE a.name LIKE CONCAT('%', :name, '%') " +
+            "AND a.status = :status AND a.code LIKE CONCAT('%', :code, '%')")
+    List<Discount> findAllByStatus(String name, Boolean status, String code);
 
     boolean existsByCode(String name);
 
