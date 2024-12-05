@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class Discount {
     private String description;
 
     @Column(name = "percent")
-    private Integer percent;
+    private BigDecimal percent;
 
     @Column(name = "created_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -42,4 +43,14 @@ public class Discount {
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
+
+    @Column(name = "expired_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date expiredDate;
+
+    @Column(name = "discount_type")
+    private Integer discountType;
+
+    @Column(name = "level_applied")
+    private BigDecimal levelApplied;
 }

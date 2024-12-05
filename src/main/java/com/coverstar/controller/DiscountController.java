@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -24,10 +25,12 @@ public class DiscountController {
             @RequestParam("name") String name,
             @RequestParam("code") String code,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam("percent") Integer percent,
-            @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
+            @RequestParam("percent") BigDecimal percent,
+            @RequestParam(value = "file", required = false) MultipartFile imageFiles,
+            @RequestParam("expiredDate") String expiredDate) {
         try {
-            Discount discount = discountService.createOrUpdateDiscount(id, name, code, description, percent, imageFiles);
+            Discount discount = discountService.createOrUpdateDiscount(id, name, code,
+                    description, percent, imageFiles, expiredDate);
             return ResponseEntity.ok(discount);
         } catch (Exception e) {
             if (e.getMessage().equals("Discount code already exists")) {
@@ -38,9 +41,11 @@ public class DiscountController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchDiscount(@RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<?> searchDiscount(@RequestParam(value = "name", required = false) String name,
+                                            @RequestParam(value = "status", required = false) Boolean status,
+                                            @RequestParam(value = "code", required = false) String code) {
         try {
-            List<Discount> discounts = discountService.searchDiscount(name);
+            List<Discount> discounts = discountService.searchDiscount(name, status, code);
             return ResponseEntity.ok(discounts);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);

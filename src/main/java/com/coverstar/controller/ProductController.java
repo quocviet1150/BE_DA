@@ -31,8 +31,7 @@ public class ProductController {
                                                    @RequestParam(value = "color", required = false) String color,
                                                    @RequestParam(value = "description", required = false) String description,
                                                    @RequestParam("file") List<MultipartFile> imageFiles,
-                                                   @RequestParam(value = "imageIdsToRemove", required = false) List<Long> imageIdsToRemove,
-                                                   @RequestParam(value = "discountIds", required = false) List<Long> discountIds) {
+                                                   @RequestParam(value = "imageIdsToRemove", required = false) List<Long> imageIdsToRemove) {
         try {
             if (Objects.isNull(productName) || Objects.isNull(brand) || Objects.isNull(quantity) ||
                     Objects.isNull(price) || Objects.isNull(color) || Objects.isNull(description)) {
@@ -47,8 +46,7 @@ public class ProductController {
                     color,
                     description,
                     imageFiles,
-                    imageIdsToRemove,
-                    discountIds);
+                    imageIdsToRemove);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
