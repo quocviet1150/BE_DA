@@ -36,9 +36,11 @@ public class CartController {
     }
 
     @GetMapping("/getAllCartsByUserId/{userId}")
-    public ResponseEntity<?> getAllCartsByUserId(@PathVariable Long userId, @RequestParam String name) {
+    public ResponseEntity<?> getAllCartsByUserId(@PathVariable Long userId,
+                                                 @RequestParam String name,
+                                                 @RequestParam boolean status) {
         try {
-            List<Cart> carts = cartService.getAllCartsByUserId(userId, name);
+            List<Cart> carts = cartService.getAllCartsByUserId(userId, name, status);
             return ResponseEntity.ok(carts);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);

@@ -24,7 +24,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart createOrUpdateCart(CartDto cartDto) {
-        Cart cart = new Cart();
+        Cart cart;
         try {
             if (cartDto.getId() != null) {
                 cart = cartRepository.findById(cartDto.getId()).orElse(null);
@@ -33,13 +33,29 @@ public class CartServiceImpl implements CartService {
                         && Objects.equals(cartDto.getUserId(), cart.getUserId())) {
                     cart.setQuantity(cart.getQuantity() + cartDto.getQuantity());
                     cart.setTotal(cart.getTotal().add(cartDto.getTotal()));
+                    cart.setColor(cartDto.getColor());
+                    cart.setSize(cartDto.getSize());
+                    cart.setStatus(true);
                 }
             } else {
-                cart.setCreatedDate(new Date());
-                cart.setProduct(productService.getProductById(cartDto.getProductId()));
-                cart.setUserId(cartDto.getUserId());
-                cart.setQuantity(cartDto.getQuantity());
-                cart.setTotal(cartDto.getTotal());
+                cart = cartRepository.findByProductIdAndUserIdAndColorAndSize(cartDto.getProductId(), cartDto.getUserId(), cartDto.getColor(), cartDto.getSize());
+
+                if (cart != null) {
+                    cart.setUpdatedDate(new Date());
+                    cart.setQuantity(cart.getQuantity() + cartDto.getQuantity());
+                    cart.setTotal(cart.getTotal().add(cartDto.getTotal()));
+                    cart.setStatus(true);
+                } else {
+                    cart = new Cart();
+                    cart.setCreatedDate(new Date());
+                    cart.setProduct(productService.getProductById(cartDto.getProductId()));
+                    cart.setUserId(cartDto.getUserId());
+                    cart.setQuantity(cartDto.getQuantity());
+                    cart.setTotal(cartDto.getTotal());
+                    cart.setColor(cartDto.getColor());
+                    cart.setSize(cartDto.getSize());
+                    cart.setStatus(true);
+                }
             }
             return cartRepository.save(cart);
         } catch (Exception e) {
@@ -49,10 +65,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<Cart> getAllCartsByUserId(Long userId, String name) {
+    public List<Cart> getAllCartsByUserId(Long userId, String name, boolean status) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
-            return cartRepository.findAllByUserIdOrderByCreatedDate(userId, nameValue);
+            return cartRepository.findAllByUserIdOrderByCreatedDate(userId, nameValue, status);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

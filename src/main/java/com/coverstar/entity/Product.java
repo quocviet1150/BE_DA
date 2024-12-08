@@ -36,14 +36,14 @@ public class Product {
     @Column(name = "brand_id", nullable = false)
     private Long brandId;
 
-    @Column(name = "discount_id")
-    private Long discountId;
-
     @Column(name = "quantity", nullable = false)
     private Long quantity;
 
     @Column(name = "price", nullable = false)
     private BigDecimal price;
+
+    @Column(name = "price_before_discount", nullable = false)
+    private BigDecimal priceBeforeDiscount;
 
     @Column(name = "created_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

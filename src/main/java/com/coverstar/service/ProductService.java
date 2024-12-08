@@ -15,6 +15,7 @@ public interface ProductService {
                                 Long brand,
                                 Long quantity,
                                 BigDecimal price,
+                                BigDecimal priceBeforeDiscount,
                                 String color,
                                 String description,
                                 List<MultipartFile> imageFiles,

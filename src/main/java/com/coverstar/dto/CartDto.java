@@ -20,4 +20,6 @@ public class CartDto implements Serializable {
     private Long userId;
     private Long quantity;
     private BigDecimal total;
+    private String color;
+    private Integer size;
 }
