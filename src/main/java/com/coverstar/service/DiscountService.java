@@ -10,9 +10,9 @@ public interface DiscountService {
 
     Discount createOrUpdateDiscount(Long id, String name, String code,
                                     String description, BigDecimal percent, MultipartFile imageFiles,
-                                    String expiredDate) throws Exception;
+                                    String expiredDate, List<Long> userIds, Integer discountType, BigDecimal levelApplied ) throws Exception;
 
-    List<Discount> searchDiscount(String name, Boolean status, String code);
+    List<Discount> searchDiscount(String name, Boolean status, String code, Long accountId, Integer discountType);
 
     Discount getDiscount(Long id);
 
