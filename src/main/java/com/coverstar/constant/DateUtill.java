@@ -22,7 +22,7 @@ public class DateUtill {
             LocalDate localDate = LocalDate.parse(dateString, formatter);
             return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         } catch (DateTimeParseException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             return null;
         }
     }
