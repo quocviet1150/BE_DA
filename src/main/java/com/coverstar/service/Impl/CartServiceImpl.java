@@ -38,7 +38,8 @@ public class CartServiceImpl implements CartService {
                     cart.setStatus(true);
                 }
             } else {
-                cart = cartRepository.findByProductIdAndUserIdAndColorAndSize(cartDto.getProductId(), cartDto.getUserId(), cartDto.getColor(), cartDto.getSize());
+                cart = cartRepository.findByProductIdAndUserIdAndColorAndSize(cartDto.getProductId(),
+                        cartDto.getUserId(), cartDto.getColor(), cartDto.getSize());
 
                 if (cart != null) {
                     cart.setUpdatedDate(new Date());
