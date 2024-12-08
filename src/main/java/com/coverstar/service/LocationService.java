@@ -9,4 +9,8 @@ public interface LocationService {
     List<Province> getAllProvinces();
     List<District> getDistrictsByProvinceId(Integer provinceId);
     List<Ward> getWardsByDistrictId(Integer districtId);
+
+    Province getProvinceById(Integer provinceId);
+    District getDistrictById(Integer districtId);
+    Ward getWardById(Integer wardId);
 }

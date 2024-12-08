@@ -51,4 +51,34 @@ public class LocationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
+
+    @GetMapping("/district/{districtId}")
+    public ResponseEntity<?> getDistrictById(@PathVariable Integer districtId) {
+        try {
+            District district = locationService.getDistrictById(districtId);
+            return ResponseEntity.ok(district);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
+    @GetMapping("/ward/{wardId}")
+    public ResponseEntity<?> getWardById(@PathVariable Integer wardId) {
+        try {
+            Ward ward = locationService.getWardById(wardId);
+            return ResponseEntity.ok(ward);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
+    @GetMapping("/province/{provinceId}")
+    public ResponseEntity<?> getProvinceById(@PathVariable Integer provinceId) {
+        try {
+            Province province = locationService.getProvinceById(provinceId);
+            return ResponseEntity.ok(province);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
 }
