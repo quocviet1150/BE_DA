@@ -17,6 +17,7 @@ public interface ProductService {
                                 BigDecimal price,
                                 BigDecimal priceBeforeDiscount,
                                 String color,
+                                String size,
                                 String description,
                                 List<MultipartFile> imageFiles,
                                 List<Long> imageIdsToRemove) throws Exception;

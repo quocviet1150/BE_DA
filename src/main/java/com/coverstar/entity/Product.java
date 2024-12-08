@@ -59,11 +59,17 @@ public class Product {
     @Column(name = "number_of_visits")
     private Long numberOfVisits;
 
+    @Column(name = "number_of_purchases")
+    private Long numberOfPurchases;
+
     @Column(name = "type", nullable = false)
     private boolean type;
 
     @Column(name = "color")
     private String color;
+
+    @Column(name = "size")
+    private String size;
 
     @Column(name = "description")
     private String description;

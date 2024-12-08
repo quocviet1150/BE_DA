@@ -46,6 +46,7 @@ public class ProductServiceImpl implements ProductService {
                                        BigDecimal price,
                                        BigDecimal priceBeforeDiscount,
                                        String color,
+                                       String size,
                                        String description,
                                        List<MultipartFile> imageFiles,
                                        List<Long> imageIdsToRemove) throws Exception {
@@ -65,6 +66,7 @@ public class ProductServiceImpl implements ProductService {
             product.setPrice(price);
             product.setPriceBeforeDiscount(priceBeforeDiscount);
             product.setColor(color);
+            product.setSize(size);
             product.setDescription(description);
 
             if (imageIdsToRemove != null && !imageIdsToRemove.isEmpty()) {

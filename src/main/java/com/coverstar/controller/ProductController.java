@@ -30,6 +30,7 @@ public class ProductController {
                                                    @RequestParam("price") BigDecimal price,
                                                    @RequestParam("priceBeforeDiscount") BigDecimal priceBeforeDiscount,
                                                    @RequestParam("color") String color,
+                                                    @RequestParam("size") String size,
                                                    @RequestParam(value = "description", required = false) String description,
                                                    @RequestParam("file") List<MultipartFile> imageFiles,
                                                    @RequestParam(value = "imageIdsToRemove", required = false) List<Long> imageIdsToRemove) {
@@ -42,6 +43,7 @@ public class ProductController {
                     price,
                     priceBeforeDiscount,
                     color,
+                    size,
                     description,
                     imageFiles,
                     imageIdsToRemove);
