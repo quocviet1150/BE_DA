@@ -53,4 +53,34 @@ public class LocationServiceImpl implements LocationService {
             throw e;
         }
     }
+
+    @Override
+    public Province getProvinceById(Integer provinceId) {
+        try {
+            return provinceRepository.findById(provinceId).orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public District getDistrictById(Integer districtId) {
+        try {
+            return districtRepository.findById(districtId).orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public Ward getWardById(Integer wardId) {
+        try {
+            return wardRepository.findById(wardId).orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }
