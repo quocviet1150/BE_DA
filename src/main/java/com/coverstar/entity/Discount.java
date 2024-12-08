@@ -2,6 +2,7 @@ package com.coverstar.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -53,4 +54,13 @@ public class Discount {
 
     @Column(name = "level_applied")
     private BigDecimal levelApplied;
+
+    @ManyToMany
+    @JoinTable(
+            name = "discount_account",
+            joinColumns = @JoinColumn(name = "discount_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    @JsonIgnore
+    private Set<Account> accounts;
 }

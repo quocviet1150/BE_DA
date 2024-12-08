@@ -1,7 +1,10 @@
 package com.coverstar.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -20,6 +23,7 @@ import javax.persistence.Table;
 @Table(name = "ROLES")
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 8374992679263373931L;

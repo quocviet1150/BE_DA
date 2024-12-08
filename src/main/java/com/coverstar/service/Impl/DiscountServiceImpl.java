@@ -1,7 +1,10 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.constant.DateUtill;
+import com.coverstar.entity.Account;
 import com.coverstar.entity.Brand;
 import com.coverstar.entity.Discount;
+import com.coverstar.repository.AccountRepository;
 import com.coverstar.repository.DiscountRepository;
 import com.coverstar.service.DiscountService;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class DiscountServiceImpl implements DiscountService {
@@ -21,13 +26,17 @@ public class DiscountServiceImpl implements DiscountService {
     @Autowired
     private DiscountRepository discountRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     @Value("${image.directory}")
     private String imageDirectory;
 
     @Override
     public Discount createOrUpdateDiscount(Long id, String name, String code,
                                            String description, BigDecimal percent, MultipartFile imageFile,
-                                           String expiredDate) throws Exception {
+                                           String expiredDate, List<Long> userIds, Integer discountType,
+                                           BigDecimal levelApplied) throws Exception {
         Discount discount = new Discount();
         try {
 
@@ -51,7 +60,19 @@ public class DiscountServiceImpl implements DiscountService {
             discount.setCode(code);
             discount.setPercent(percent);
             discount.setDescription(description);
-            discount.setExpiredDate(new Date(Long.parseLong(expiredDate)));
+            discount.setExpiredDate(DateUtill.parseDate(expiredDate));
+            discount.setDiscountType(discountType);
+            discount.setLevelApplied(levelApplied);
+            if (userIds != null && !userIds.isEmpty()) {
+                Set<Account> accounts = new HashSet<>();
+                for (Long usedId : userIds) {
+                    Account account = accountRepository.findById(usedId).orElse(null);
+                    if (discount != null) {
+                        accounts.add(account);
+                    }
+                }
+                discount.setAccounts(accounts);
+            }
             discount = discountRepository.save(discount);
 
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -73,13 +94,13 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     @Override
-    public List<Discount> searchDiscount(String name, Boolean status, String code) {
+    public List<Discount> searchDiscount(String name, Boolean status, String code, Long accountId, Integer discountType) {
         List<Discount> discounts;
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             Boolean statusValue = status != null ? status : null;
             String codeValue = code != null ? code : StringUtils.EMPTY;
-            discounts = discountRepository.findAllByStatus(nameValue, statusValue, codeValue);
+            discounts = discountRepository.findAllByStatus(nameValue, statusValue, codeValue, accountId, discountType);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

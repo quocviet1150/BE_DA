@@ -19,18 +19,21 @@ public class DiscountController {
     @Autowired
     private DiscountService discountService;
 
-    @PostMapping("/createDiscount")
-    public ResponseEntity<?> createDiscount(
+    @PostMapping("/createOrUpdateDiscount")
+    public ResponseEntity<?> createOrUpdateDiscount(
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam("name") String name,
             @RequestParam("code") String code,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam("percent") BigDecimal percent,
             @RequestParam(value = "file", required = false) MultipartFile imageFiles,
-            @RequestParam("expiredDate") String expiredDate) {
+            @RequestParam("expiredDate") String expiredDate,
+            @RequestParam(value = "userIds", required = false) List<Long> discountIds,
+            @RequestParam("discountType") Integer discountType,
+            @RequestParam("levelApplied") BigDecimal levelApplied) {
         try {
             Discount discount = discountService.createOrUpdateDiscount(id, name, code,
-                    description, percent, imageFiles, expiredDate);
+                    description, percent, imageFiles, expiredDate, discountIds, discountType, levelApplied);
             return ResponseEntity.ok(discount);
         } catch (Exception e) {
             if (e.getMessage().equals("Discount code already exists")) {
@@ -43,9 +46,11 @@ public class DiscountController {
     @GetMapping("/search")
     public ResponseEntity<?> searchDiscount(@RequestParam(value = "name", required = false) String name,
                                             @RequestParam(value = "status", required = false) Boolean status,
-                                            @RequestParam(value = "code", required = false) String code) {
+                                            @RequestParam(value = "code", required = false) String code,
+                                            @RequestParam(value = "accountId", required = false) Long accountId,
+                                            @RequestParam(value = "discountType", required = false) Integer discountType) {
         try {
-            List<Discount> discounts = discountService.searchDiscount(name, status, code);
+            List<Discount> discounts = discountService.searchDiscount(name, status, code, accountId, discountType);
             return ResponseEntity.ok(discounts);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
@@ -91,4 +96,6 @@ public class DiscountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
+
+
 }
