@@ -28,21 +28,19 @@ public class ProductController {
                                                    @RequestParam("brand") Long brand,
                                                    @RequestParam("quantity") Long quantity,
                                                    @RequestParam("price") BigDecimal price,
-                                                   @RequestParam(value = "color", required = false) String color,
+                                                   @RequestParam("priceBeforeDiscount") BigDecimal priceBeforeDiscount,
+                                                   @RequestParam("color") String color,
                                                    @RequestParam(value = "description", required = false) String description,
                                                    @RequestParam("file") List<MultipartFile> imageFiles,
                                                    @RequestParam(value = "imageIdsToRemove", required = false) List<Long> imageIdsToRemove) {
         try {
-            if (Objects.isNull(productName) || Objects.isNull(brand) || Objects.isNull(quantity) ||
-                    Objects.isNull(price) || Objects.isNull(color) || Objects.isNull(description)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One or more required fields are null");
-            }
             Product product = productService.saveOrUpdateProduct(
                     id,
                     productName,
                     brand,
                     quantity,
                     price,
+                    priceBeforeDiscount,
                     color,
                     description,
                     imageFiles,

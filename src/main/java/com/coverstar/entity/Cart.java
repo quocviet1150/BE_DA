@@ -42,9 +42,18 @@ public class Cart {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private Long quantity;
+
+    @Column(name = "color", nullable = false)
+    private String color;
+
+    @Column(name = "size", nullable = false)
+    private Integer size;
 
     @Column(name = "total", nullable = false)
     private BigDecimal total;
+
+    @Column(name = "status", nullable = false)
+    private boolean status;
 }

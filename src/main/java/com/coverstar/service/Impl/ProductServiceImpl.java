@@ -44,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
                                        Long brand,
                                        Long quantity,
                                        BigDecimal price,
+                                       BigDecimal priceBeforeDiscount,
                                        String color,
                                        String description,
                                        List<MultipartFile> imageFiles,
@@ -62,6 +63,7 @@ public class ProductServiceImpl implements ProductService {
             product.setBrandId(brand);
             product.setQuantity(quantity);
             product.setPrice(price);
+            product.setPriceBeforeDiscount(priceBeforeDiscount);
             product.setColor(color);
             product.setDescription(description);
 
