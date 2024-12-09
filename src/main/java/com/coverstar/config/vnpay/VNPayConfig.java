@@ -1,4 +1,4 @@
-package com.coverstar.config;
+package com.coverstar.config.vnpay;
 
 import org.springframework.stereotype.Component;
 
