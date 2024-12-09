@@ -55,6 +55,12 @@ public class Purchase implements Serializable {
     @Column(name = "quantity", nullable = false)
     private Long quantity;
 
+    @Column(name = "color", nullable = false)
+    private String color;
+
+    @Column(name = "size", nullable = false)
+    private Integer size;
+
     @Column(name = "total", nullable = false)
     private BigDecimal total;
 
@@ -69,4 +75,7 @@ public class Purchase implements Serializable {
 
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
+
+    @Column(name = "first_wave")
+    private Integer firstWave;
 }

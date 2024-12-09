@@ -25,7 +25,7 @@ public class ProductController {
     @PostMapping("/createOrUpdateProduct")
     public ResponseEntity<?> createOrUpdateProduct(@RequestParam(value = "id", required = false) Long id,
                                                    @RequestParam("productName") String productName,
-                                                   @RequestParam("brand") Long brand,
+                                                   @RequestParam("brandId") Long brandId,
                                                    @RequestParam("quantity") Long quantity,
                                                    @RequestParam("price") BigDecimal price,
                                                    @RequestParam("priceBeforeDiscount") BigDecimal priceBeforeDiscount,
@@ -38,7 +38,7 @@ public class ProductController {
             Product product = productService.saveOrUpdateProduct(
                     id,
                     productName,
-                    brand,
+                    brandId,
                     quantity,
                     price,
                     priceBeforeDiscount,
@@ -89,7 +89,7 @@ public class ProductController {
 
     @PostMapping("/updateStatus")
     public ResponseEntity<?> updateStatus(@RequestParam("id") Long id,
-                                          @RequestParam("type") boolean type) {
+                                          @RequestParam("type") Boolean type) {
         try {
             Product product = productService.updateStatus(id, type);
             return ResponseEntity.ok(product);
