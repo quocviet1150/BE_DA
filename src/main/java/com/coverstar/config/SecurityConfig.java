@@ -43,7 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/sign-in/**",
                         "/assets/**",
                         "/forgot-password/**",
-                        "/products/search/**")
+                        "/products/search/**",
+                        "/vnPay/vnpay-payment")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
