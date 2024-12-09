@@ -12,7 +12,7 @@ public interface ProductService {
 
     Product saveOrUpdateProduct(Long id,
                                 String productName,
-                                Long brand,
+                                Long brandId,
                                 Long quantity,
                                 BigDecimal price,
                                 BigDecimal priceBeforeDiscount,
@@ -31,5 +31,5 @@ public interface ProductService {
 
     void deleteProductById(Long id) throws Exception;
 
-    Product updateStatus(Long id, boolean type);
+    Product updateStatus(Long id, Boolean type);
 }

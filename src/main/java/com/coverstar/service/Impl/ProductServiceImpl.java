@@ -1,5 +1,6 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.constant.Constants;
 import com.coverstar.entity.Comment;
 import com.coverstar.entity.Discount;
 import com.coverstar.entity.Image;
@@ -41,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product saveOrUpdateProduct(Long id,
                                        String productName,
-                                       Long brand,
+                                       Long brandId,
                                        Long quantity,
                                        BigDecimal price,
                                        BigDecimal priceBeforeDiscount,
@@ -58,10 +59,10 @@ public class ProductServiceImpl implements ProductService {
             } else {
                 product = new Product();
                 product.setCreatedDate(new Date());
-                product.setType(true);
+                product.setStatus(true);
             }
             product.setProductName(productName);
-            product.setBrandId(brand);
+            product.setBrandId(brandId);
             product.setQuantity(quantity);
             product.setPrice(price);
             product.setPriceBeforeDiscount(priceBeforeDiscount);
@@ -103,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
                     Image image = new Image();
                     image.setProductId(product.getId());
                     image.setDirectoryPath(fullPath);
-                    image.setType(1);
+                    image.setType(Integer.valueOf(Constants.Number.ONE));
                     images.add(image);
                 }
                 product.setImages(images);
@@ -193,10 +194,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateStatus(Long id, boolean type) {
+    public Product updateStatus(Long id, Boolean type) {
         try {
             Product product = productRepository.getProductById(id);
-            product.setType(type);
+            product.setStatus(type);
             return productRepository.save(product);
         } catch (Exception e) {
             e.printStackTrace();

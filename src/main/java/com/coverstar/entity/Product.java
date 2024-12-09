@@ -62,8 +62,8 @@ public class Product {
     @Column(name = "number_of_purchases")
     private Long numberOfPurchases;
 
-    @Column(name = "type", nullable = false)
-    private boolean type;
+    @Column(name = "status", nullable = false)
+    private Boolean status;
 
     @Column(name = "color")
     private String color;
