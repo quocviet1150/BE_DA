@@ -1,6 +1,6 @@
-package com.coverstar.service.Impl;
+package com.coverstar.service.vnpay;
 
-import com.coverstar.config.VNPayConfig;
+import com.coverstar.config.vnpay.VNPayConfig;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

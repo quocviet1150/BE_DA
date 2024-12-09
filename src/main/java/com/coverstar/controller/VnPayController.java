@@ -1,7 +1,7 @@
 package com.coverstar.controller;
 
 import com.coverstar.constant.Constants;
-import com.coverstar.service.Impl.VNPayService;
+import com.coverstar.service.vnpay.VNPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
