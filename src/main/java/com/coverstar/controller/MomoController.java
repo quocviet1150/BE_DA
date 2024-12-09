@@ -19,6 +19,9 @@ import java.math.BigDecimal;
 @RequestMapping("/momo")
 public class MomoController {
 
+    @Autowired
+    private CreateOrderMoMo createOrderMoMo;
+
     @PostMapping("/submitOrder")
     public ResponseEntity<?> submidOrder(@RequestParam("amount") BigDecimal orderTotal,
                                          @RequestParam("username") String username) {
