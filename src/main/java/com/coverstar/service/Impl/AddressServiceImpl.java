@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -32,7 +33,7 @@ public class AddressServiceImpl implements AddressService {
             address.setFullName(addressDto.getFullName());
             address.setPhoneNumber(addressDto.getPhoneNumber());
             address.setUserId(addressDto.getUserId());
-            address.setDefault(addressDto.isDefault());
+            address.setDefaultValue(addressDto.getDefaultValue());
             address.setProvinceId(addressDto.getProvinceId());
             address.setDistrictId(addressDto.getDistrictId());
             address.setWardId(addressDto.getWardId());
@@ -66,7 +67,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address getAddressByUserId(Long userId) {
+    public List<Address> getAddressByUserId(Long userId) {
         try {
             return addressRepository.findByUserId(userId);
         } catch (Exception e) {
@@ -76,13 +77,23 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address updateDefaultAddress(Long id, boolean isDefault) {
+    public Address updateDefaultAddress(Long id, Integer isDefault) {
         try {
             Address address = addressRepository.findById(id).orElse(null);
             assert address != null;
-            address.setDefault(isDefault);
+            address.setDefaultValue(isDefault);
             addressRepository.save(address);
             return address;
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public Address getAddressByUserIdAndIsDefault(Long userId) {
+        try {
+            return addressRepository.findByUserIdAndDefault(userId, 1);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

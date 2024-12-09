@@ -16,8 +16,6 @@ public interface DiscountService {
 
     Discount getDiscount(Long id);
 
-    Long getByCode(String code);
-
     void deleteDiscount(Long id);
 
     Discount updateStatus(Long id, boolean status);

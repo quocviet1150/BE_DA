@@ -16,7 +16,7 @@ public class AddressDto implements Serializable {
     private String fullName;
     private String phoneNumber;
     private String address;
-    private boolean isDefault;
+    private Integer defaultValue;
     private Integer provinceId;
     private Integer districtId;
     private Integer wardId;

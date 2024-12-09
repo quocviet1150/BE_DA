@@ -119,16 +119,6 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     @Override
-    public Long getByCode(String code) {
-        try {
-            return discountRepository.findByCode(code);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    @Override
     public void deleteDiscount(Long id) {
         try {
             Discount discount = discountRepository.findById(id).orElse(null);
