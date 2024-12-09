@@ -67,16 +67,6 @@ public class DiscountController {
         }
     }
 
-    @GetMapping("/getByCode/{code}")
-    public ResponseEntity<?> getByCode(@PathVariable String code) {
-        try {
-            Long percent = discountService.getByCode(code);
-            return ResponseEntity.ok(percent);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
-        }
-    }
-
     @PostMapping("/deleteDiscount/{id}")
     public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
         try {

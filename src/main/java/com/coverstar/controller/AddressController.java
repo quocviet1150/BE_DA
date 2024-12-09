@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/address")
@@ -51,7 +52,17 @@ public class AddressController {
     @GetMapping("/getAddressByUserId/{userId}")
     public ResponseEntity<?> getAddressByUserId(@PathVariable Long userId) {
         try {
-            Address address = addressService.getAddressByUserId(userId);
+            List<Address> address = addressService.getAddressByUserId(userId);
+            return ResponseEntity.ok(address);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
+    @GetMapping("/getAddressByUserIdAndIsDefault/{userId}")
+    public ResponseEntity<?> getAddressByUserIdAndIsDefault(@PathVariable Long userId) {
+        try {
+            Address address = addressService.getAddressByUserIdAndIsDefault(userId);
             return ResponseEntity.ok(address);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
@@ -60,7 +71,7 @@ public class AddressController {
 
     @PostMapping("updateDefaultAddress/{id}")
     public ResponseEntity<?> updateDefaultAddress(@PathVariable Long id,
-                                                  @RequestParam("isDefault") boolean isDefault) {
+                                                  @RequestParam("isDefault") Integer isDefault) {
         try {
             Address address = addressService.updateDefaultAddress(id, isDefault);
             return ResponseEntity.ok(address);

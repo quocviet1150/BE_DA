@@ -32,8 +32,8 @@ public class Address implements Serializable {
     @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "is_default", nullable = false)
-    private boolean isDefault;
+    @Column(name = "default_value", nullable = false)
+    private Integer defaultValue;
 
     @Column(name = "provinceId", nullable = false)
     private Integer provinceId;

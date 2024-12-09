@@ -3,6 +3,8 @@ package com.coverstar.service;
 import com.coverstar.dto.AddressDto;
 import com.coverstar.entity.Address;
 
+import java.util.List;
+
 public interface AddressService {
     Address createOrUpdateAddress(AddressDto addressDto);
 
@@ -10,7 +12,9 @@ public interface AddressService {
 
     Address getAddressById(Long id);
 
-    Address getAddressByUserId(Long userId);
+    List<Address> getAddressByUserId(Long userId);
 
-    Address updateDefaultAddress(Long id, boolean isDefault);
+    Address updateDefaultAddress(Long id, Integer isDefault);
+
+    Address getAddressByUserIdAndIsDefault(Long userId);
 }
