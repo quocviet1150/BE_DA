@@ -28,4 +28,13 @@ Tên chủ thẻ	    NGUYEN VAN A
 Ngày phát hành	07/15
 Mật khẩu OTP	123456
 
+// momo
 ![img.png](img.png)
+
+// paypal
+https://developer.paypal.com/
+// login admin
+![img_1.png](img_1.png)
+
+// login user
+![img_2.png](img_2.png)
