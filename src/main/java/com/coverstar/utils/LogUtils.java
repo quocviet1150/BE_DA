@@ -1,13 +1,13 @@
 package com.coverstar.utils;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public class LogUtils {
-    static Logger logger;
+    public static final Logger logger = LogManager.getLogger(LogUtils.class);
 
     public static void init(){
-        logger = Logger.getLogger(LogUtils.class);
         BasicConfigurator.configure();
     }
 
