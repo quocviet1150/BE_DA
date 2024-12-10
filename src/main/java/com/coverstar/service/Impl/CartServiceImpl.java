@@ -60,7 +60,7 @@ public class CartServiceImpl implements CartService {
             }
             return cartRepository.save(cart);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             return cartRepository.findAllByUserIdOrderByCreatedDate(userId, nameValue, status);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
 
@@ -82,7 +82,7 @@ public class CartServiceImpl implements CartService {
         try {
             return cartRepository.findById(id).orElse(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -92,7 +92,7 @@ public class CartServiceImpl implements CartService {
         try {
             cartRepository.deleteById(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }

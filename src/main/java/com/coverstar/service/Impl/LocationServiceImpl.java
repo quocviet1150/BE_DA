@@ -29,7 +29,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return provinceRepository.findAll();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -39,7 +39,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return districtRepository.findByProvinceId(provinceId);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -49,7 +49,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return wardRepository.findByDistrictId(districtId);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -59,7 +59,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return provinceRepository.findById(provinceId).orElse(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -69,7 +69,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return districtRepository.findById(districtId).orElse(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -79,7 +79,7 @@ public class LocationServiceImpl implements LocationService {
         try {
             return wardRepository.findById(wardId).orElse(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }

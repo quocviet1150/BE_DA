@@ -83,9 +83,9 @@ public class ConfigEnvironment {
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
         return null;
     }

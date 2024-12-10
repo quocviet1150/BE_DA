@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
             product = productRepository.save(product);
             return saveImageProduct(imageFiles, product);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
             }
             return productRepository.save(product);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -124,7 +124,7 @@ public class ProductServiceImpl implements ProductService {
             BigDecimal maxPriceValue = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
             return productRepository.findByNameContainingAndPriceBetweenWithDetails(brandId, nameValue, minPriceValue, maxPriceValue);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -149,7 +149,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
             return product;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -188,7 +188,7 @@ public class ProductServiceImpl implements ProductService {
             }
             productRepository.deleteById(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -200,7 +200,7 @@ public class ProductServiceImpl implements ProductService {
             product.setStatus(type);
             return productRepository.save(product);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }

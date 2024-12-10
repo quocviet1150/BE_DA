@@ -99,7 +99,7 @@ public class AccountServiceImpl implements AccountService {
                 account.setCountLock(newCountLock);
                 accountDao.update(account);
             } catch (Exception exception) {
-                exception.printStackTrace();
+                exception.fillInStackTrace();
             }
             throw e;
         }
@@ -191,7 +191,7 @@ public class AccountServiceImpl implements AccountService {
             Account account = getEmailOrUser(userNameOrEmail);
             return passwordEncoder.matches(oldPassword, account.getPassword());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             return false;
         }
     }
@@ -226,7 +226,7 @@ public class AccountServiceImpl implements AccountService {
             mail.setModel(maps);
             mailService.sendEmail(mail);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
@@ -255,7 +255,7 @@ public class AccountServiceImpl implements AccountService {
             mail.setModel(maps);
             mailService.sendEmail(mail);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
@@ -297,7 +297,7 @@ public class AccountServiceImpl implements AccountService {
                     emailOrUser.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
             return account;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -309,7 +309,7 @@ public class AccountServiceImpl implements AccountService {
             account.setActive(false);
             sendEmail(account);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 

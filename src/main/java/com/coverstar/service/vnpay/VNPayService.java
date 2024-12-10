@@ -74,7 +74,7 @@ public class VNPayService {
                     query.append('=');
                     query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    e.fillInStackTrace();
                 }
                 if (itr.hasNext()) {
                     query.append('&');
@@ -98,7 +98,7 @@ public class VNPayService {
                 fieldName = URLEncoder.encode((String) params.nextElement(), StandardCharsets.US_ASCII.toString());
                 fieldValue = URLEncoder.encode(request.getParameter(fieldName), StandardCharsets.US_ASCII.toString());
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                e.fillInStackTrace();
             }
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
                 fields.put(fieldName, fieldValue);
