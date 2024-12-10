@@ -19,11 +19,14 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
         super(configEnvironment);
     }
 
-    public static PaymentResponse process(ConfigEnvironment env, String orderId, String requestId, String amount, String orderInfo, String returnURL, String notifyURL, String extraData, RequestType requestType, Boolean autoCapture) throws Exception {
+    public static PaymentResponse process(ConfigEnvironment env, String orderId, String requestId,
+                                          String amount, String orderInfo, String returnURL, String notifyURL,
+                                          String extraData, RequestType requestType, Boolean autoCapture) {
         try {
             CreateOrderMoMo m2Processor = new CreateOrderMoMo(env);
 
-            PaymentRequest request = m2Processor.createPaymentCreationRequest(orderId, requestId, amount, orderInfo, returnURL, notifyURL, extraData, requestType, autoCapture);
+            PaymentRequest request = m2Processor.createPaymentCreationRequest(orderId, requestId,
+                    amount, orderInfo, returnURL, notifyURL, extraData, requestType, autoCapture);
             PaymentResponse captureMoMoResponse = m2Processor.execute(request);
 
             return captureMoMoResponse;
@@ -34,7 +37,7 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
     }
 
     @Override
-    public PaymentResponse execute(PaymentRequest request) throws MoMoException {
+    public PaymentResponse execute(PaymentRequest request) {
         try {
 
             String payload = getGson().toJson(request, PaymentRequest.class);
@@ -46,13 +49,13 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
             }
 
             PaymentResponse captureMoMoResponse = getGson().fromJson(response.getData(), PaymentResponse.class);
-            String responserawData = Constants.Parameter.REQUEST_ID + "=" + captureMoMoResponse.getRequestId() +
+            String responseRawData = Constants.Parameter.REQUEST_ID + "=" + captureMoMoResponse.getRequestId() +
                     "&" + Constants.Parameter.ORDER_ID + "=" + captureMoMoResponse.getOrderId() +
                     "&" + Constants.Parameter.MESSAGE + "=" + captureMoMoResponse.getMessage() +
                     "&" + Constants.Parameter.PAY_URL + "=" + captureMoMoResponse.getPayUrl() +
                     "&" + Constants.Parameter.RESULT_CODE + "=" + captureMoMoResponse.getResultCode();
 
-            LogUtils.info("[PaymentMoMoResponse] rawData: " + responserawData);
+            LogUtils.info("[PaymentMoMoResponse] rawData: " + responseRawData);
             return captureMoMoResponse;
 
         } catch (Exception exception) {
@@ -62,7 +65,8 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
     }
 
     public PaymentRequest createPaymentCreationRequest(String orderId, String requestId, String amount, String orderInfo,
-                                                       String returnUrl, String notifyUrl, String extraData, RequestType requestType, Boolean autoCapture) {
+                                                       String returnUrl, String notifyUrl, String extraData,
+                                                       RequestType requestType, Boolean autoCapture) {
 
         try {
             String requestRawData = new StringBuilder()
@@ -81,8 +85,10 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
             LogUtils.debug("[PaymentRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
 
-            return new PaymentRequest(partnerInfo.getPartnerCode(), orderId, requestId, Language.EN, orderInfo, Long.valueOf(amount), "test MoMo", null, requestType,
-                    returnUrl, notifyUrl, "test store ID", extraData, null, autoCapture, null, signRequest);
+            return new PaymentRequest(partnerInfo.getPartnerCode(), orderId, requestId, Language.EN, orderInfo,
+                    Long.valueOf(amount), "test MoMo", null, requestType, returnUrl,
+                    notifyUrl, "test store ID", extraData, null, autoCapture, null,
+                    signRequest);
         } catch (Exception e) {
             LogUtils.error("[PaymentRequest] "+ e);
         }
