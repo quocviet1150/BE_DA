@@ -2,7 +2,6 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.DateUtill;
 import com.coverstar.entity.Account;
-import com.coverstar.entity.Brand;
 import com.coverstar.entity.Discount;
 import com.coverstar.repository.AccountRepository;
 import com.coverstar.repository.DiscountRepository;

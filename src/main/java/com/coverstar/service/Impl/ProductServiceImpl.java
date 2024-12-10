@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product saveOrUpdateProduct(Long id,
                                        String productName,
-                                       Long brandId,
+                                       Long productTypeId,
                                        Long quantity,
                                        BigDecimal price,
                                        BigDecimal priceBeforeDiscount,
@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
                 product.setStatus(true);
             }
             product.setProductName(productName);
-            product.setBrandId(brandId);
+            product.setProductTypeId(productTypeId);
             product.setQuantity(quantity);
             product.setPrice(price);
             product.setPriceBeforeDiscount(priceBeforeDiscount);
@@ -117,12 +117,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findByNameAndPriceRange(Long brandId, String name, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<Product> findByNameAndPriceRange(Long productTypeId, String name, BigDecimal minPrice, BigDecimal maxPrice) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             BigDecimal minPriceValue = minPrice != null ? minPrice : BigDecimal.ZERO;
             BigDecimal maxPriceValue = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
-            return productRepository.findByNameContainingAndPriceBetweenWithDetails(brandId, nameValue, minPriceValue, maxPriceValue);
+            return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue, minPriceValue, maxPriceValue);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

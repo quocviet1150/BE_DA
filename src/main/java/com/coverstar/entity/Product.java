@@ -33,8 +33,8 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @Column(name = "brand_id", nullable = false)
-    private Long brandId;
+    @Column(name = "productType_id", nullable = false)
+    private Long productTypeId;
 
     @Column(name = "quantity", nullable = false)
     private Long quantity;

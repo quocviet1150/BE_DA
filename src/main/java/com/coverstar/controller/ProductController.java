@@ -25,7 +25,7 @@ public class ProductController {
     @PostMapping("/createOrUpdateProduct")
     public ResponseEntity<?> createOrUpdateProduct(@RequestParam(value = "id", required = false) Long id,
                                                    @RequestParam("productName") String productName,
-                                                   @RequestParam("brandId") Long brandId,
+                                                   @RequestParam("productTypeId") Long productTypeId,
                                                    @RequestParam("quantity") Long quantity,
                                                    @RequestParam("price") BigDecimal price,
                                                    @RequestParam("priceBeforeDiscount") BigDecimal priceBeforeDiscount,
@@ -38,7 +38,7 @@ public class ProductController {
             Product product = productService.saveOrUpdateProduct(
                     id,
                     productName,
-                    brandId,
+                    productTypeId,
                     quantity,
                     price,
                     priceBeforeDiscount,
@@ -57,7 +57,7 @@ public class ProductController {
     public ResponseEntity<List<Product>> search(@RequestBody @Valid SearchProductDto searchProductDto) {
         try {
             List<Product> products = productService.findByNameAndPriceRange(
-                    searchProductDto.getBrandId(),
+                    searchProductDto.getProductTypeId(),
                     searchProductDto.getName(),
                     searchProductDto.getMinPrice(),
                     searchProductDto.getMaxPrice());
