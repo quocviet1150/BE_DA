@@ -12,16 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("payment")
 public class PaypalController {
 
     private final PaypalService paypalService;
 
-    @PostMapping("/payment/create")
+    @PostMapping("/create")
     public ResponseEntity<?> createPayment(
             @RequestParam("method") String method,
             @RequestParam("amount") String amount,
@@ -52,7 +54,7 @@ public class PaypalController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
     }
 
-    @GetMapping("/payment/success")
+    @GetMapping("/success")
     public ResponseEntity<?> paymentSuccess(
             @RequestParam("paymentId") String paymentId,
             @RequestParam("PayerID") String payerId
@@ -68,12 +70,12 @@ public class PaypalController {
         return ResponseEntity.ok("paymentSuccess");
     }
 
-    @GetMapping("/payment/cancel")
+    @GetMapping("/cancel")
     public ResponseEntity<?> paymentCancel() {
         return ResponseEntity.ok("paymentCancel");
     }
 
-    @GetMapping("/payment/error")
+    @GetMapping("/error")
     public ResponseEntity<?> paymentError() {
         return ResponseEntity.ok("paymentError");
     }
