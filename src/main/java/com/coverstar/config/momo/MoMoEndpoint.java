@@ -11,7 +11,8 @@ public class MoMoEndpoint {
     private String tokenCbInquiry;
     private String tokenDelete;
 
-    public MoMoEndpoint(String endpoint, String create, String refund, String query, String confirm, String tokenPay, String tokenBind, String tokenQueryCb, String tokenDelete) {
+    public MoMoEndpoint(String endpoint, String create, String refund, String query, String confirm,
+                        String tokenPay, String tokenBind, String tokenQueryCb, String tokenDelete) {
         this.endpoint = endpoint;
         this.create = create;
         this.confirm = confirm;

@@ -33,7 +33,7 @@ public class ConfigEnvironment {
     }
 
     public static ConfigEnvironment selectEnv(String target) throws IllegalArgumentException {
-        switch(target) {
+        switch (target) {
             case "dev":
                 return selectEnv(EnvTarget.DEV);
             case "prod":
@@ -44,7 +44,8 @@ public class ConfigEnvironment {
     }
 
     public static ConfigEnvironment selectEnv(EnvTarget target) {
-        try (InputStream input = ConfigEnvironment.class.getClassLoader().getResourceAsStream("application.properties")) {
+        try (InputStream input =
+                     ConfigEnvironment.class.getClassLoader().getResourceAsStream("application.properties")) {
             Properties prop = new Properties();
             prop.load(input);
 
@@ -59,7 +60,8 @@ public class ConfigEnvironment {
                             prop.getProperty("TOKEN_BIND_URL"),
                             prop.getProperty("TOKEN_INQUIRY_URL"),
                             prop.getProperty("TOKEN_DELETE_URL"));
-                    PartnerInfo devInfo = new PartnerInfo(prop.getProperty("DEV_PARTNER_CODE"), prop.getProperty("DEV_ACCESS_KEY"), prop.getProperty("DEV_SECRET_KEY"));
+                    PartnerInfo devInfo = new PartnerInfo(prop.getProperty("DEV_PARTNER_CODE"),
+                            prop.getProperty("DEV_ACCESS_KEY"), prop.getProperty("DEV_SECRET_KEY"));
                     ConfigEnvironment dev = new ConfigEnvironment(devEndpoint, devInfo, target);
                     return dev;
                 case PROD:
@@ -71,7 +73,9 @@ public class ConfigEnvironment {
                             prop.getProperty("TOKEN_PAY_URL"),
                             prop.getProperty("TOKEN_BIND_URL"),
                             prop.getProperty("TOKEN_INQUIRY_URL"),
-                            prop.getProperty("TOKEN_DELETE_URL"));                    PartnerInfo prodInfo = new PartnerInfo(prop.getProperty("PROD_PARTNER_CODE"), prop.getProperty("PROD_ACCESS_KEY"), prop.getProperty("PROD_SECRET_KEY"));
+                            prop.getProperty("TOKEN_DELETE_URL"));
+                    PartnerInfo prodInfo = new PartnerInfo(prop.getProperty("PROD_PARTNER_CODE"),
+                            prop.getProperty("PROD_ACCESS_KEY"), prop.getProperty("PROD_SECRET_KEY"));
                     ConfigEnvironment prod = new ConfigEnvironment(prodEndpoint, prodInfo, target);
                     return prod;
                 default:
