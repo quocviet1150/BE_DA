@@ -36,14 +36,14 @@ public class Product {
     @Column(name = "productType_id", nullable = false)
     private Long productTypeId;
 
-    @Column(name = "quantity", nullable = false)
-    private Long quantity;
-
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
-
-    @Column(name = "price_before_discount", nullable = false)
-    private BigDecimal priceBeforeDiscount;
+//    @Column(name = "quantity", nullable = false)
+//    private Long quantity;
+//
+//    @Column(name = "price", nullable = false)
+//    private BigDecimal price;
+//
+//    @Column(name = "price_before_discount", nullable = false)
+//    private BigDecimal priceBeforeDiscount;
 
     @Column(name = "created_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -65,9 +65,9 @@ public class Product {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
-    @Column(name = "color")
-    private String color;
-
+//    @Column(name = "color")
+//    private String color;
+//
     @Column(name = "size")
     private String size;
 
