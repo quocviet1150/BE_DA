@@ -18,7 +18,6 @@ import java.util.Formatter;
 public class Encoder {
 
     private static final char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
-//    private static final String ENCODING = "UTF-8";
 
     private static final String HMAC_SHA256 = "HmacSHA256";
 
@@ -33,7 +32,7 @@ public class Encoder {
         return sb.toString();
     }
 
-    public static String signHmacSHA256(String data, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+    public static String signHmacSHA256(String data, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), HMAC_SHA256);
         Mac mac = Mac.getInstance(HMAC_SHA256);
         mac.init(secretKeySpec);
@@ -64,7 +63,6 @@ public class Encoder {
     }
 
     public static String encode64(String s) {
-        // encode data on your side using BASE64
         byte[] bytesEncoded = Base64.encodeBase64(s.getBytes());
         return new String(bytesEncoded);
     }
@@ -85,36 +83,28 @@ public class Encoder {
     }
 
     public static String hmacSha1(String value, String key) throws Exception {
-        // Get an hmac_sha1 key from the raw key bytes
         byte[] keyBytes = key.getBytes();
         SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
 
-        // Get an hmac_sha1 Mac instance and initialize with the signing key
         Mac mac = Mac.getInstance("HmacSHA1");
         mac.init(signingKey);
 
-        // Compute the hmac on input data bytes
         byte[] rawHmac = mac.doFinal(value.getBytes());
         return Base64.encodeBase64String(rawHmac);
     }
 
     public static String encryptRSA(byte[] dataBytes, String publicKey) throws Exception {
-        // Note: You can use java.util.Base64 instead of sun.misc.*
         PublicKey pubk;
-//        BASE64Decoder decoder = new BASE64Decoder();
-//        BASE64Encoder encoder = new BASE64Encoder();
         java.util.Base64.Decoder decoder = java.util.Base64.getDecoder();
         java.util.Base64.Encoder encoder = java.util.Base64.getEncoder();
 
         byte[] publicKeyBytes = decoder.decode(publicKey);
-//        byte[] publicKeyBytes = decoder.decodeBuffer(publicKey);
         EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         pubk = keyFactory.generatePublic(publicKeySpec);
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, pubk);
         return encoder.encodeToString(cipher.doFinal(dataBytes)).replace("\r", "");
-//        return new String(encoder.encode(cipher.doFinal(dataBytes)).replace("\r", ""));
     }
 
     public static String decryptRSA(String encryptData, String privateKey) {
