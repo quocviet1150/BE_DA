@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.save(comment);
             return comment;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -95,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
             }
             productRepository.deleteById(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }

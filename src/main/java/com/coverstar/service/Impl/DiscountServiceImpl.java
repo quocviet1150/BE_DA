@@ -87,7 +87,7 @@ public class DiscountServiceImpl implements DiscountService {
             }
             discountRepository.save(discount);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
         return discount;
@@ -102,7 +102,7 @@ public class DiscountServiceImpl implements DiscountService {
             String codeValue = code != null ? code : StringUtils.EMPTY;
             discounts = discountRepository.findAllByStatus(nameValue, statusValue, codeValue, accountId, discountType);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
         return discounts;
@@ -113,7 +113,7 @@ public class DiscountServiceImpl implements DiscountService {
         try {
             return discountRepository.findById(id).orElse(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -131,7 +131,7 @@ public class DiscountServiceImpl implements DiscountService {
 
             discountRepository.deleteById(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -147,7 +147,7 @@ public class DiscountServiceImpl implements DiscountService {
             }
             return discount;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }

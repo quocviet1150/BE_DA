@@ -71,7 +71,7 @@ public class BrandServiceImpl implements BrandService {
             }
             brandRepository.save(brand);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
         return brand;
@@ -85,7 +85,7 @@ public class BrandServiceImpl implements BrandService {
             Integer type = brandSearchDto.getType();
             return brandRepository.findBrandsByConditions(name, status, type);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -95,7 +95,7 @@ public class BrandServiceImpl implements BrandService {
         try {
             return brandRepository.findByIdAndType(id, type);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -121,7 +121,7 @@ public class BrandServiceImpl implements BrandService {
 
             brandRepository.deleteById(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
@@ -140,7 +140,7 @@ public class BrandServiceImpl implements BrandService {
             brand.setStatus(status);
             return brandRepository.save(brand);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
             throw e;
         }
     }
