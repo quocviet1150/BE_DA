@@ -9,15 +9,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
-@Table(name = "BRANDS")
+@Table(name = "PRODUCT_TYPES")
 @Getter
 @Setter
-public class Brand {
+public class ProductType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +38,4 @@ public class Brand {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "type")
-    private Integer type;
 }

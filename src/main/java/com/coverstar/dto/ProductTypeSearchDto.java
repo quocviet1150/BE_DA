@@ -11,8 +11,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BrandSearchDto implements Serializable {
+public class ProductTypeSearchDto implements Serializable {
     private String name;
     private Boolean status;
-    private Integer type;
 }

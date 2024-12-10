@@ -12,7 +12,7 @@ public interface ProductService {
 
     Product saveOrUpdateProduct(Long id,
                                 String productName,
-                                Long brandId,
+                                Long productTypeId,
                                 Long quantity,
                                 BigDecimal price,
                                 BigDecimal priceBeforeDiscount,
@@ -22,8 +22,8 @@ public interface ProductService {
                                 List<MultipartFile> imageFiles,
                                 List<Long> imageIdsToRemove) throws Exception;
 
-    List<Product> findByNameAndPriceRange(Long brandId,
-            String name,
+    List<Product> findByNameAndPriceRange(Long productTypeId,
+                                          String name,
                                           BigDecimal minPrice,
                                           BigDecimal maxPrice);
 
