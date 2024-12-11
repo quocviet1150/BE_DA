@@ -2,7 +2,9 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.PurchaseDto;
+import com.coverstar.entity.Product;
 import com.coverstar.entity.Purchase;
+import com.coverstar.repository.ProductRepository;
 import com.coverstar.repository.PurchaseRepository;
 import com.coverstar.service.AddressService;
 import com.coverstar.service.ProductService;
@@ -28,14 +30,23 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     @Override
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) {
         List<Purchase> purchases = new ArrayList<>();
         try {
             for (PurchaseDto purchaseDto : purchaseDtos) {
                 Purchase purchase = new Purchase();
+                Product product = productService.getProductById(purchaseDto.getProductId());
+                if (product.getQuantitySold() == null) {
+                    product.setQuantitySold(0L);
+                }
+                product.setQuantitySold(product.getQuantitySold() + purchaseDto.getQuantity());
+                product = productRepository.save(product);
                 purchase.setUserId(purchaseDto.getUserId());
-                purchase.setProduct(productService.getProductById(purchaseDto.getProductId()));
+                purchase.setProduct(product);
                 purchase.setQuantity(purchaseDto.getQuantity());
                 purchase.setPaymentMethod(purchaseDto.getPaymentMethod());
                 purchase.setAddress(addressService.getAddressById(purchaseDto.getAddressId()));
