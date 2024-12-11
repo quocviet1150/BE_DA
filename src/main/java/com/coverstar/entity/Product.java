@@ -1,6 +1,7 @@
 package com.coverstar.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
@@ -92,5 +93,6 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "shipping_method_id")
     )
+    @JsonManagedReference
     private Set<ShippingMethod> shippingMethods;
 }

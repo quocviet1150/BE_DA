@@ -1,6 +1,8 @@
 package com.coverstar.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -43,5 +46,6 @@ public class ShippingMethod {
     private Date updatedDate;
 
     @ManyToMany(mappedBy = "shippingMethods")
-    private Set<Product> products;
+    @JsonBackReference
+    private Set<Product> products = new HashSet<>();
 }

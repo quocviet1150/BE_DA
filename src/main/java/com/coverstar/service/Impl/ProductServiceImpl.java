@@ -17,6 +17,9 @@ import com.coverstar.service.ProductService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
@@ -250,10 +253,13 @@ public class ProductServiceImpl implements ProductService {
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
             Boolean status = searchProductDto.getStatus() != null ? searchProductDto.getStatus() : true;
-            // TODO : Implement orderBy
             String orderBy = searchProductDto.getOrderBy() != null ? searchProductDto.getOrderBy() : "DESC";
+            Sort sort = "ASC".equalsIgnoreCase(orderBy)
+                    ? Sort.by("createdDate").ascending()
+                    : Sort.by("createdDate").descending();
+            Pageable pageable = PageRequest.of(1, 1, sort);
             return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue,
-                    minPriceValue, maxPriceValue, brandId, categoryId, shippingMethodIds, status);
+                    minPriceValue, maxPriceValue, brandId, categoryId, shippingMethodIds, status, pageable);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
