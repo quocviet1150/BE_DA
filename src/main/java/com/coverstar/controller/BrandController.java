@@ -48,6 +48,18 @@ public class BrandController {
         }
     }
 
+    @GetMapping("/getBrandById/{id}")
+    public ResponseEntity<?> getBrandById(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(brandService.getBrandById(id));
+        } catch (Exception e) {
+            if (e.getMessage().equals(Constants.BRAND_NOT_FOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.BRAND_NOT_FOUND);
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
     @PostMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {

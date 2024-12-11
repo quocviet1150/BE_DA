@@ -60,4 +60,16 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
+
+    @GetMapping("/getCategoryById/{id}")
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(categoryService.getCategoryById(id));
+        } catch (Exception e) {
+            if (e.getMessage().equals(Constants.CATEGORY_NOT_FOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.CATEGORY_NOT_FOUND);
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
 }
