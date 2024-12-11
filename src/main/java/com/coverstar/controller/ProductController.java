@@ -42,9 +42,9 @@ public class ProductController {
                                                    @RequestParam MultiValueMap<String, String> productDetailsParams,
                                                    @RequestParam(value = "productDetailsFiles", required = false) List<MultipartFile> productDetailsFiles,
                                                    @RequestParam(value = "listProductDetailIdRemove", required = false) String listProductDetailIdRemove,
-                                                   @RequestParam List<String> shippingMethodIds,
-                                                   @RequestParam Long brandId,
-                                                   @RequestParam Long categoryId,
+                                                   @RequestParam("shippingMethodIds") List<String> shippingMethodIds,
+                                                   @RequestParam("brandId") Long brandId,
+                                                   @RequestParam("categoryId") Long categoryId,
                                                    @RequestParam("status") Boolean status) {
         try {
 
