@@ -22,4 +22,7 @@ public class SearchProductDto implements Serializable {
     private String priceOrder;
     private Integer page;
     private Integer size;
+    private String quantitySold;
+    private String numberOfVisits;
+    private String evaluate;
 }

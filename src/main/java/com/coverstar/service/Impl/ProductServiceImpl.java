@@ -227,7 +227,6 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-
     private String saveImage(MultipartFile imageFile, Long productDetailId) throws Exception {
         String filePath = imageDirectory + "productDetail" + File.separator + productDetailId;
         File directory = new File(filePath);
@@ -255,24 +254,27 @@ public class ProductServiceImpl implements ProductService {
             Boolean status = searchProductDto.getStatus() != null ? searchProductDto.getStatus() : null;
             String orderBy = searchProductDto.getOrderBy() != null ? searchProductDto.getOrderBy() : Constants.DESC;
             String priceOrder = searchProductDto.getPriceOrder() != null ? searchProductDto.getPriceOrder() : Constants.DESC;
+            String quantitySold = searchProductDto.getQuantitySold() != null ? searchProductDto.getQuantitySold() : Constants.DESC;
+            String numberOfVisits = searchProductDto.getNumberOfVisits() != null ? searchProductDto.getNumberOfVisits() : Constants.DESC;
+            Float evaluate = searchProductDto.getEvaluate() != null ? Float.valueOf(searchProductDto.getEvaluate()) : null;
 
-            Sort sort;
-            if (Constants.ASC.equalsIgnoreCase(orderBy)) {
-                if (Constants.ASC.equalsIgnoreCase(priceOrder)) {
-                    sort = Sort.by(Sort.Order.asc(Constants.PRICE)).and(Sort.by(Sort.Order.asc(Constants.CREATED_DATE)));
-                } else {
-                    sort = Sort.by(Sort.Order.desc(Constants.PRICE)).and(Sort.by(Sort.Order.asc(Constants.CREATED_DATE)));
-                }
-            } else {
-                if (Constants.ASC.equalsIgnoreCase(priceOrder)) {
-                    sort = Sort.by(Sort.Order.asc(Constants.PRICE)).and(Sort.by(Sort.Order.desc(Constants.CREATED_DATE)));
-                } else {
-                    sort = Sort.by(Sort.Order.desc(Constants.PRICE)).and(Sort.by(Sort.Order.desc(Constants.CREATED_DATE)));
-                }
-            }
+            Sort.Order priceSort = Constants.ASC.equalsIgnoreCase(priceOrder) ?
+                    Sort.Order.asc(Constants.PRICE) : Sort.Order.desc(Constants.PRICE);
+
+            Sort.Order dateSort = Constants.ASC.equalsIgnoreCase(orderBy) ?
+                    Sort.Order.asc(Constants.CREATED_DATE) : Sort.Order.desc(Constants.CREATED_DATE);
+
+            Sort.Order quantitySort = Constants.ASC.equalsIgnoreCase(quantitySold) ?
+                    Sort.Order.asc(Constants.QUANTITY_SOLD) : Sort.Order.desc(Constants.QUANTITY_SOLD);
+
+            Sort.Order numberOfVisitsSort = Constants.ASC.equalsIgnoreCase(numberOfVisits) ?
+                    Sort.Order.asc(Constants.NUMBER_OF_VISITS) : Sort.Order.desc(Constants.NUMBER_OF_VISITS);
+
+            Sort sort = Sort.by(priceSort, dateSort, quantitySort, numberOfVisitsSort);
+
             Pageable pageable = PageRequest.of(searchProductDto.getPage(), searchProductDto.getSize(), sort);
             return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue,
-                    minPriceValue, maxPriceValue, brandId, categoryId, shippingMethodIds, status, pageable);
+                    minPriceValue, maxPriceValue, brandId, categoryId, shippingMethodIds, status, evaluate, pageable);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
