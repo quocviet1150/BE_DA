@@ -1,9 +1,7 @@
 package com.coverstar.service;
 
-import com.coverstar.dto.CommentDto;
-import com.coverstar.dto.ProductDetailDTO;
-import com.coverstar.entity.Comment;
 import com.coverstar.entity.Product;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -15,11 +13,14 @@ public interface ProductService {
                                 String productName,
                                 Long productTypeId,
                                 String size,
+                                BigDecimal price,
+                                Float percentageReduction,
                                 String description,
                                 List<MultipartFile> imageFiles,
-                                List<Long> imageIdsToRemove,
-                                List<ProductDetailDTO> productDetails
-    ) throws Exception;
+                                String imageIdsToRemove,
+                                MultiValueMap<String, String> productDetailsParams,
+                                List<MultipartFile> productDetailsFiles,
+                                String listProductDetailIdRemove) throws Exception;
 
     List<Product> findByNameAndPriceRange(Long productTypeId,
                                           String name,

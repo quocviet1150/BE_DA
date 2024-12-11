@@ -3,12 +3,10 @@ package com.coverstar.service.Impl;
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.ProductDetailDTO;
 import com.coverstar.entity.Comment;
-import com.coverstar.entity.Discount;
 import com.coverstar.entity.Image;
 import com.coverstar.entity.Product;
 import com.coverstar.entity.ProductDetail;
 import com.coverstar.repository.CommentRepository;
-import com.coverstar.repository.DiscountRepository;
 import com.coverstar.repository.ImageRepository;
 import com.coverstar.repository.ProductDetailRepository;
 import com.coverstar.repository.ProductRepository;
@@ -18,17 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -53,11 +53,34 @@ public class ProductServiceImpl implements ProductService {
                                        String productName,
                                        Long productTypeId,
                                        String size,
+                                       BigDecimal price,
+                                       Float percentageReduction,
                                        String description,
                                        List<MultipartFile> imageFiles,
-                                       List<Long> imageIdsToRemove,
-                                       List<ProductDetailDTO> productDetails) throws Exception {
+                                       String imageIdsToRemove,
+                                       MultiValueMap<String, String> productDetailsParams,
+                                       List<MultipartFile> productDetailsFiles,
+                                       String listProductDetailIdRemove) throws Exception {
         try {
+
+            List<ProductDetailDTO> productDetails = new ArrayList<>();
+            int i = 0;
+            while (productDetailsParams.containsKey("productDetails[" + i + "].nameDT")) {
+                Long idDT = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].idDT")));
+                String name = productDetailsParams.getFirst("productDetails[" + i + "].nameDT");
+                Long quantity = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].quantityDT")));
+                BigDecimal priceDT = new BigDecimal(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].priceDT")));
+                Float percentageReductionDT = Float.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].percentageReductionDT")));
+                MultipartFile imageFile = (productDetailsFiles != null && productDetailsFiles.size() > i) ? productDetailsFiles.get(i) : null;
+                String descriptionDT = productDetailsParams.getFirst("productDetails[" + i + "].descriptionDT");
+                Integer type = Integer.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].typeDT")));
+
+                ProductDetailDTO productDetailDTO = new ProductDetailDTO(idDT, name, quantity, priceDT,
+                        percentageReductionDT, imageFile, descriptionDT, type);
+                productDetails.add(productDetailDTO);
+                i++;
+            }
+
             Product product;
             if (id != null) {
                 product = productRepository.getProductById(id);
@@ -71,10 +94,15 @@ public class ProductServiceImpl implements ProductService {
             product.setProductName(productName);
             product.setProductTypeId(productTypeId);
             product.setSize(size);
-            product.setDescription(description);
+            product.setPrice(price);
+            product.setPercentageReduction(percentageReduction);
 
-            if (imageIdsToRemove != null && !imageIdsToRemove.isEmpty()) {
-                for (Long imageId : imageIdsToRemove) {
+            product.setDescription(description);
+            List<Long> imageIdsToRemoveDT = Arrays.stream(imageIdsToRemove.split(","))
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+            if (!imageIdsToRemoveDT.isEmpty()) {
+                for (Long imageId : imageIdsToRemoveDT) {
                     Image image = imageRepository.findImageById(imageId);
                     File file = new File(image.getDirectoryPath());
                     if (file.exists()) {
@@ -84,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
             product = productRepository.save(product);
-            saveProductDetails(product, productDetails);
+            saveProductDetails(product, productDetails, listProductDetailIdRemove);
             return saveImageProduct(imageFiles, product);
         } catch (Exception e) {
             e.fillInStackTrace();
@@ -120,29 +148,63 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private void saveProductDetails(Product product, List<ProductDetailDTO> productDetailDTOs) throws Exception {
+    private void saveProductDetails(Product product, List<ProductDetailDTO> productDetailDTOs, String listProductDetailIdRemove) throws Exception {
+
+        if (StringUtils.isNotEmpty(listProductDetailIdRemove)) {
+            List<Long> productDetailIdRemove = Arrays.stream(listProductDetailIdRemove.split(","))
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+            for (Long id : productDetailIdRemove) {
+                ProductDetail productDetail = productDetailRepository.findById(id)
+                        .orElseThrow(() -> new Exception("ProductDetail not found"));
+                File file = new File(productDetail.getDirectoryPath());
+                if (file.exists()) {
+                    file.delete();
+                }
+                productDetailRepository.deleteById(id);
+            }
+        }
+
         for (ProductDetailDTO productDetailDTO : productDetailDTOs) {
-            ProductDetail productDetail = new ProductDetail();
+            ProductDetail productDetail;
+
+            if (productDetailDTO.getId() != null) {
+                productDetail = productDetailRepository.findById(productDetailDTO.getId())
+                        .orElseThrow(() -> new Exception("ProductDetail not found"));
+                productDetail.setUpdatedDate(new Date());
+            } else {
+                productDetail = new ProductDetail();
+                productDetail.setCreatedDate(new Date());
+                productDetail.setUpdatedDate(new Date());
+            }
+
             productDetail.setProductId(product.getId());
             productDetail.setName(productDetailDTO.getName());
             productDetail.setQuantity(productDetailDTO.getQuantity());
             productDetail.setPrice(productDetailDTO.getPrice());
             productDetail.setPercentageReduction(productDetailDTO.getPercentageReduction());
-            productDetail.setCreatedDate(new Date());
-            productDetail.setUpdatedDate(new Date());
             productDetail.setDescription(productDetailDTO.getDescription());
             productDetail.setType(productDetailDTO.getType());
-            ProductDetail productDetail1 = productDetailRepository.save(productDetail);
+
+            productDetail = productDetailRepository.save(productDetail);
+
             if (productDetailDTO.getImageFile() != null && !productDetailDTO.getImageFile().isEmpty()) {
-                String imagePath = saveImage(productDetailDTO.getImageFile(), productDetail1.getId());
+                if (productDetailDTO.getId() != null) {
+                    File file = new File(productDetail.getDirectoryPath());
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
+                String imagePath = saveImage(productDetailDTO.getImageFile(), productDetail.getId());
                 productDetail.setDirectoryPath(imagePath);
                 productDetailRepository.save(productDetail);
             }
         }
     }
 
-    private String saveImage(MultipartFile imageFile, Long id) throws Exception {
-        String filePath = imageDirectory + "productDetail" + File.separator + id;
+
+    private String saveImage(MultipartFile imageFile, Long productDetailId) throws Exception {
+        String filePath = imageDirectory + "productDetail" + File.separator + productDetailId;
         File directory = new File(filePath);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -152,15 +214,15 @@ public class ProductServiceImpl implements ProductService {
         return fullPath;
     }
 
+
     @Override
     public List<Product> findByNameAndPriceRange(Long productTypeId, String name, BigDecimal minPrice, BigDecimal maxPrice) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             BigDecimal minPriceValue = minPrice != null ? minPrice : BigDecimal.ZERO;
             BigDecimal maxPriceValue = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
-            return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue
-//                    , minPriceValue, maxPriceValue
-            );
+            return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue,
+                    minPriceValue, maxPriceValue);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

@@ -1,7 +1,6 @@
 package com.coverstar.controller;
 
 import com.coverstar.constant.Constants;
-import com.coverstar.dto.ProductDetailDTO;
 import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.Product;
 import com.coverstar.service.ProductService;
@@ -9,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,38 +34,34 @@ public class ProductController {
                                                    @RequestParam("productName") String productName,
                                                    @RequestParam("productTypeId") Long productTypeId,
                                                    @RequestParam("size") String size,
+                                                   @RequestParam("price") BigDecimal price,
+                                                   @RequestParam("percentageReduction") Float percentageReduction,
                                                    @RequestParam(value = "description", required = false) String description,
                                                    @RequestParam("file") List<MultipartFile> imageFiles,
-                                                   @RequestParam(value = "imageIdsToRemove", required = false) List<Long> imageIdsToRemove,
+                                                   @RequestParam(value = "imageIdsToRemove", required = false) String imageIdsToRemove,
                                                    @RequestParam MultiValueMap<String, String> productDetailsParams,
-                                                   @RequestParam(value = "productDetailsFiles", required = false) List<MultipartFile> productDetailsFiles) {
+                                                   @RequestParam(value = "productDetailsFiles", required = false) List<MultipartFile> productDetailsFiles,
+                                                   @RequestParam(value = "listProductDetailIdRemove", required = false) String listProductDetailIdRemove){
         try {
-            List<ProductDetailDTO> productDetails = new ArrayList<>();
-            int i = 0;
-            while (productDetailsParams.containsKey("productDetails[" + i + "].name")) {
-                String name = productDetailsParams.getFirst("productDetails[" + i + "].name");
-                Long quantity = Long.valueOf(productDetailsParams.getFirst("productDetails[" + i + "].quantity"));
-                BigDecimal price = new BigDecimal(productDetailsParams.getFirst("productDetails[" + i + "].price"));
-                Float percentageReduction = Float.valueOf(productDetailsParams.getFirst("productDetails[" + i + "].percentageReduction"));
-                MultipartFile imageFile = (productDetailsFiles != null && productDetailsFiles.size() > i) ? productDetailsFiles.get(i) : null;
-                String descriptionDT = productDetailsParams.getFirst("productDetails[" + i + "].description");
-                Integer type = Integer.valueOf(productDetailsParams.getFirst("productDetails[" + i + "].type"));
 
-                ProductDetailDTO productDetailDTO = new ProductDetailDTO(name, quantity, price, percentageReduction, imageFile, descriptionDT, type);
-                productDetails.add(productDetailDTO);
-                i++;
-            }
             Product product = productService.saveOrUpdateProduct(
                     id,
                     productName,
                     productTypeId,
                     size,
+                    price,
+                    percentageReduction,
                     description,
                     imageFiles,
                     imageIdsToRemove,
-                    productDetails);
+                    productDetailsParams,
+                    productDetailsFiles,
+                    listProductDetailIdRemove);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
+            if (Objects.equals(e.getMessage(), "ProductDetail not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ProductDetail not found");
+            }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
