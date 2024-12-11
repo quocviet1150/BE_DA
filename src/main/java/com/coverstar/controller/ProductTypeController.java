@@ -19,7 +19,7 @@ public class ProductTypeController {
     @Autowired
     private ProductTypeService productTypeService;
 
-    @PostMapping("/createOrUpdateProductType")
+    @PostMapping("/admin/createOrUpdateProductType")
     public ResponseEntity<?> createOrUpdateProductType(@RequestParam(value = "id", required = false) Long id,
                                              @RequestParam("name") String name,
                                              @RequestParam(value = "file", required = false) MultipartFile imageFiles,
@@ -58,7 +58,7 @@ public class ProductTypeController {
         }
     }
 
-    @PostMapping("/deleteProductType/{id}")
+    @PostMapping("/admin/deleteProductType/{id}")
     public ResponseEntity<?> deleteProductType(@PathVariable Long id) {
         try {
             productTypeService.deleteProductType(id);
@@ -71,7 +71,7 @@ public class ProductTypeController {
         }
     }
 
-    @PostMapping("/updateStatus")
+    @PostMapping("/admin/updateStatus")
     public ResponseEntity<?> updateStatus(@RequestParam("id") Long id,
                                           @RequestParam("status") boolean status) {
         try {

@@ -29,7 +29,7 @@ public class ShippingMethodController {
         }
     }
 
-    @PostMapping("/createOrUpdate")
+    @PostMapping("/admin/createOrUpdate")
     public ResponseEntity<?> createOrUpdate(@RequestBody @Valid ShippingMethodDto shippingMethodDto) {
         try {
             ShippingMethod shippingMethod = shippingMethodService.createOrUpdate(shippingMethodDto);
@@ -42,7 +42,7 @@ public class ShippingMethodController {
         }
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/admin/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {
             shippingMethodService.delete(id);
@@ -55,7 +55,7 @@ public class ShippingMethodController {
         }
     }
 
-    @GetMapping("/getShippingMethodById/{id}")
+    @GetMapping("/admin/getShippingMethodById/{id}")
     public ResponseEntity<?> getShippingMethodById(@PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(shippingMethodService.getShippingMethodById(id));

@@ -43,9 +43,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/sign-in/**",
                         "/assets/**",
                         "/forgot-password/**",
-                        "/products/search/**",
                         "/vnPay/vnpay-payment")
                 .permitAll()
+                .antMatchers(
+                        "/productTypes/admin/**",
+                        "/products/admin/**",
+                        "/brands/admin/**",
+                        "/categories/admin/**",
+                        "/discounts/admin/**",
+                        "/purchases/admin/**",
+                        "/shipping-methods/admin/**"
+                        )
+                .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
