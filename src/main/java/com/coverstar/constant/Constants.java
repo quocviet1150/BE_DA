@@ -16,6 +16,7 @@ public class Constants {
     public static final String BRAND_NOT_FOUND = "Brand not found";
     public static final String CATEGORY_NOT_FOUND = "Category not found";
     public static final String SUCCESS = "Success";
+    public static final String SHIPPING_METHOD_NOT_FOUND = "Shipping method not found";
 
 
     public static final class Number {
