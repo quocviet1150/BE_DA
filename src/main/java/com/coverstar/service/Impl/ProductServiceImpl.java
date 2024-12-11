@@ -2,14 +2,17 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.ProductDetailDTO;
+import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.Comment;
 import com.coverstar.entity.Image;
 import com.coverstar.entity.Product;
 import com.coverstar.entity.ProductDetail;
+import com.coverstar.entity.ShippingMethod;
 import com.coverstar.repository.CommentRepository;
 import com.coverstar.repository.ImageRepository;
 import com.coverstar.repository.ProductDetailRepository;
 import com.coverstar.repository.ProductRepository;
+import com.coverstar.repository.ShippingMethodRepository;
 import com.coverstar.service.ProductService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+    @Autowired
+    private ShippingMethodRepository shippingMethodRepository;
+
     @Override
     public Product saveOrUpdateProduct(Long id,
                                        String productName,
@@ -60,13 +66,20 @@ public class ProductServiceImpl implements ProductService {
                                        String imageIdsToRemove,
                                        MultiValueMap<String, String> productDetailsParams,
                                        List<MultipartFile> productDetailsFiles,
-                                       String listProductDetailIdRemove) throws Exception {
+                                       String listProductDetailIdRemove,
+                                       List<String> shippingMethodIds,
+                                       Long brandId,
+                                       Long categoryId,
+                                       Boolean status) throws Exception {
         try {
 
             List<ProductDetailDTO> productDetails = new ArrayList<>();
             int i = 0;
             while (productDetailsParams.containsKey("productDetails[" + i + "].nameDT")) {
-                Long idDT = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].idDT")));
+                Long idDT = null;
+                if (StringUtils.isNotEmpty(productDetailsParams.getFirst("productDetails[" + i + "].idDT"))) {
+                    idDT = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].idDT")));
+                }
                 String name = productDetailsParams.getFirst("productDetails[" + i + "].nameDT");
                 Long quantity = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].quantityDT")));
                 BigDecimal priceDT = new BigDecimal(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].priceDT")));
@@ -96,19 +109,28 @@ public class ProductServiceImpl implements ProductService {
             product.setSize(size);
             product.setPrice(price);
             product.setPercentageReduction(percentageReduction);
+            product.setBrandId(brandId);
+            product.setCategoryId(categoryId);
+            product.setStatus(status);
 
+            List<ShippingMethod> shippingMethods = shippingMethodRepository.findAllById(
+                    shippingMethodIds.stream().map(Long::parseLong).collect(Collectors.toList())
+            );
+            product.setShippingMethods(new HashSet<>(shippingMethods));
             product.setDescription(description);
-            List<Long> imageIdsToRemoveDT = Arrays.stream(imageIdsToRemove.split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            if (!imageIdsToRemoveDT.isEmpty()) {
-                for (Long imageId : imageIdsToRemoveDT) {
-                    Image image = imageRepository.findImageById(imageId);
-                    File file = new File(image.getDirectoryPath());
-                    if (file.exists()) {
-                        file.delete();
+            if (StringUtils.isNotEmpty(imageIdsToRemove)) {
+                List<Long> imageIdsToRemoveDT = Arrays.stream(imageIdsToRemove.split(","))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+                if (!imageIdsToRemoveDT.isEmpty()) {
+                    for (Long imageId : imageIdsToRemoveDT) {
+                        Image image = imageRepository.findImageById(imageId);
+                        File file = new File(image.getDirectoryPath());
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        imageRepository.deleteById(imageId);
                     }
-                    imageRepository.deleteById(imageId);
                 }
             }
             product = productRepository.save(product);
@@ -216,13 +238,22 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<Product> findByNameAndPriceRange(Long productTypeId, String name, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto) {
         try {
-            String nameValue = name != null ? name : StringUtils.EMPTY;
-            BigDecimal minPriceValue = minPrice != null ? minPrice : BigDecimal.ZERO;
-            BigDecimal maxPriceValue = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
+            String nameValue = searchProductDto.getName() != null ? searchProductDto.getName() : StringUtils.EMPTY;
+            BigDecimal minPriceValue = searchProductDto.getMinPrice() != null ? searchProductDto.getMinPrice() : BigDecimal.ZERO;
+            BigDecimal maxPriceValue = searchProductDto.getMaxPrice() != null ? searchProductDto.getMaxPrice() : BigDecimal.valueOf(Double.MAX_VALUE);
+            Long productTypeId = searchProductDto.getProductTypeId() != null ? searchProductDto.getProductTypeId() : 0L;
+            Long brandId = searchProductDto.getBrandId() != null ? searchProductDto.getBrandId() : 0L;
+            Long categoryId = searchProductDto.getCategoryId() != null ? searchProductDto.getCategoryId() : 0L;
+            List<Long> shippingMethodIds = searchProductDto.getShippingMethodIds().stream()
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+            Boolean status = searchProductDto.getStatus() != null ? searchProductDto.getStatus() : true;
+            // TODO : Implement orderBy
+            String orderBy = searchProductDto.getOrderBy() != null ? searchProductDto.getOrderBy() : "DESC";
             return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue,
-                    minPriceValue, maxPriceValue);
+                    minPriceValue, maxPriceValue, brandId, categoryId, shippingMethodIds, status);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
