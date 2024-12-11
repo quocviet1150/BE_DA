@@ -79,4 +79,7 @@ public class Product {
 
     @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Comment> comments;
+
+    @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProductDetail> productDetails;
 }
