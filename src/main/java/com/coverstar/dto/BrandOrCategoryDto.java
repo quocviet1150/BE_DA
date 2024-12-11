@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @Getter
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class BrandOrCategoryDto implements Serializable {
     private Long id;
+    private Long productTypeId;
     private String name;
     private Boolean status;
     private String description;

@@ -39,6 +39,7 @@ public class BrandServiceImpl implements BrandService {
                 brand.setCreatedDate(new Date());
                 brand.setUpdatedDate(new Date());
             }
+            brand.setProductTypeId(brandOrCategoryDto.getProductTypeId());
             brand.setName(brandOrCategoryDto.getName());
             brand.setDescription(brandOrCategoryDto.getDescription());
             brand.setStatus(brandOrCategoryDto.getStatus());
@@ -71,11 +72,12 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public List<Brand> getAllBrand(String name, Boolean status) {
+    public List<Brand> getAllBrand(Long productTypeId, String name, Boolean status) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
+            Long productTypeIdValue = productTypeId != null ? productTypeId : null;
             Boolean statusValue = status != null ? status : null;
-            return brandRepository.findAllByConditions(nameValue, statusValue);
+            return brandRepository.findAllByConditions(productTypeIdValue, nameValue, statusValue);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

@@ -12,6 +12,9 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     @Query("SELECT b FROM Brand b " +
             "WHERE b.name LIKE CONCAT('%', :name, '%') " +
+            "AND (:productTypeId IS NULL OR b.productTypeId = :productTypeId)" +
             "AND (:status IS NULL OR b.status = :status)")
-    List<Brand> findAllByConditions(String name, Boolean status);
+    List<Brand> findAllByConditions(Long productTypeId, String name, Boolean status);
+
+    List<Brand> findAllByProductTypeId(Long id);
 }
