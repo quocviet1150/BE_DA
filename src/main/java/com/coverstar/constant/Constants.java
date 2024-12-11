@@ -7,6 +7,14 @@ public class Constants {
     public static final String PURCHASE_NOT_FOUND = "Purchase not found";
     public static final String LANGUAGE_VI = "vi";
     public static final String LANGUAGE_EN = "en";
+    public static final String ASC = "ASC";
+    public static final String DESC = "DESC";
+    public static final String PRICE = "price";
+    public static final String CREATED_DATE = "createdDate";
+    public static final String BRAND_NOT_FOUND = "Brand not found";
+    public static final String CATEGORY_NOT_FOUND = "Category not found";
+    public static final String SUCCESS = "Success";
+
 
     public static final class Number {
         public static final String ONE = "1";

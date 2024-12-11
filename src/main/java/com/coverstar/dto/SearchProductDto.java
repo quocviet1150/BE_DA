@@ -19,4 +19,7 @@ public class SearchProductDto implements Serializable {
     private Long categoryId;
     private List<String> shippingMethodIds;
     private String orderBy;
+    private String priceOrder;
+    private Integer page;
+    private Integer size;
 }
