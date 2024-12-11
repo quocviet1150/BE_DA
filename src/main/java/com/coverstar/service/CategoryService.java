@@ -10,5 +10,5 @@ public interface CategoryService {
 
     void delete(Long id) throws Exception;
 
-    List<Category> getAllCategory(String name, Boolean status);
+    List<Category> getAllCategory(String name, Boolean status, Long productTypeId);
 }

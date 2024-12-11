@@ -52,9 +52,10 @@ public class CategoryController {
 
     @GetMapping("/getAllCategory")
     public ResponseEntity<?> getAllCategory(@RequestParam(value = "name", required = false) String name,
+                                            @RequestParam(value = "productTypeId", required = false) Long productTypeId,
                                             @RequestParam(value = "status", required = false) Boolean status) {
         try {
-            return ResponseEntity.ok(categoryService.getAllCategory(name, status));
+            return ResponseEntity.ok(categoryService.getAllCategory(name, status, productTypeId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }

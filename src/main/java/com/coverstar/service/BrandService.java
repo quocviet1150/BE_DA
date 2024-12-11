@@ -10,5 +10,5 @@ public interface BrandService {
 
     void delete(Long id) throws Exception;
 
-    List<Brand> getAllBrand(String name, Boolean status);
+    List<Brand> getAllBrand(Long productTypeId, String name, Boolean status);
 }

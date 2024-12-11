@@ -39,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
                 category.setCreatedDate(new Date());
                 category.setUpdatedDate(new Date());
             }
+            category.setProductTypeId(categoryDto.getProductTypeId());
             category.setName(categoryDto.getName());
             category.setDescription(categoryDto.getDescription());
             category.setStatus(categoryDto.getStatus());
@@ -72,11 +73,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAllCategory(String name, Boolean status) {
+    public List<Category> getAllCategory(String name, Boolean status, Long productTypeId) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             Boolean statusValue = status != null ? status : null;
-            return categoryRepository.findAllByConditions(nameValue, statusValue);
+            Long productTypeIdValue = productTypeId != null ? productTypeId : null;
+            return categoryRepository.findAllByConditions(nameValue, statusValue, productTypeIdValue);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

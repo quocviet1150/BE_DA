@@ -24,6 +24,9 @@ public class Brand {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "productType_id", nullable = false)
+    private Long productTypeId;
+
     @Column(name = "status", nullable = false)
     private Boolean status;
 
