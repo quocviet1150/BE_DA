@@ -7,12 +7,7 @@ import com.coverstar.service.ShippingMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -39,6 +34,31 @@ public class ShippingMethodController {
         try {
             ShippingMethod shippingMethod = shippingMethodService.createOrUpdate(shippingMethodDto);
             return ResponseEntity.ok(shippingMethod);
+        } catch (Exception e) {
+            if (e.getMessage().equals(Constants.SHIPPING_METHOD_NOT_FOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.SHIPPING_METHOD_NOT_FOUND);
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        try {
+            shippingMethodService.delete(id);
+            return ResponseEntity.ok(Constants.SUCCESS);
+        } catch (Exception e) {
+            if (e.getMessage().equals(Constants.SHIPPING_METHOD_NOT_FOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.SHIPPING_METHOD_NOT_FOUND);
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
+    @GetMapping("/getShippingMethodById/{id}")
+    public ResponseEntity<?> getShippingMethodById(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(shippingMethodService.getShippingMethodById(id));
         } catch (Exception e) {
             if (e.getMessage().equals(Constants.SHIPPING_METHOD_NOT_FOUND)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.SHIPPING_METHOD_NOT_FOUND);

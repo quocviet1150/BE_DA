@@ -1,6 +1,8 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.constant.Constants;
 import com.coverstar.dto.ShippingMethodDto;
+import com.coverstar.entity.Product;
 import com.coverstar.entity.ShippingMethod;
 import com.coverstar.repository.ShippingMethodRepository;
 import com.coverstar.service.ShippingMethodService;
@@ -47,6 +49,38 @@ public class ShippingMethodServiceImpl implements ShippingMethodService {
             shippingMethod.setPrice(shippingMethodDto.getPrice());
             shippingMethod.setType(shippingMethodDto.getType());
             shippingMethodRepository.save(shippingMethod);
+            return shippingMethod;
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void delete(Long id) throws Exception {
+        try {
+            ShippingMethod shippingMethod = shippingMethodRepository.findById(id).orElse(null);
+            if (shippingMethod == null) {
+                throw new Exception(Constants.SHIPPING_METHOD_NOT_FOUND);
+            }
+            for (Product product : shippingMethod.getProducts()) {
+                product.getShippingMethods().remove(shippingMethod);
+            }
+            shippingMethod.getProducts().clear();
+            shippingMethodRepository.delete(shippingMethod);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ShippingMethod getShippingMethodById(Long id) throws Exception {
+        try {
+            ShippingMethod shippingMethod = shippingMethodRepository.findById(id).orElse(null);
+            if (shippingMethod == null) {
+                throw new Exception(Constants.SHIPPING_METHOD_NOT_FOUND);
+            }
             return shippingMethod;
         } catch (Exception e) {
             e.fillInStackTrace();

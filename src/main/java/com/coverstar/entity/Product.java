@@ -87,7 +87,7 @@ public class Product {
     @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProductDetail> productDetails;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "product_shipping_methods",
             joinColumns = @JoinColumn(name = "product_id"),

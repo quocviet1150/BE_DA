@@ -38,8 +38,8 @@ public class BrandServiceImpl implements BrandService {
             } else {
                 brand.setCreatedDate(new Date());
                 brand.setUpdatedDate(new Date());
+                brand.setProductTypeId(brandOrCategoryDto.getProductTypeId());
             }
-            brand.setProductTypeId(brandOrCategoryDto.getProductTypeId());
             brand.setName(brandOrCategoryDto.getName());
             brand.setDescription(brandOrCategoryDto.getDescription());
             brand.setStatus(brandOrCategoryDto.getStatus());
@@ -78,6 +78,20 @@ public class BrandServiceImpl implements BrandService {
             Long productTypeIdValue = productTypeId != null ? productTypeId : null;
             Boolean statusValue = status != null ? status : null;
             return brandRepository.findAllByConditions(productTypeIdValue, nameValue, statusValue);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public Brand getBrandById(Long id) throws Exception {
+        try {
+            Brand brand = brandRepository.getById(id);
+            if (brand == null) {
+                throw new Exception(Constants.BRAND_NOT_FOUND);
+            }
+            return brand;
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

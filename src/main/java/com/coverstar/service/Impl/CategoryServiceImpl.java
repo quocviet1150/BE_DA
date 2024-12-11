@@ -38,8 +38,8 @@ public class CategoryServiceImpl implements CategoryService {
             } else {
                 category.setCreatedDate(new Date());
                 category.setUpdatedDate(new Date());
+                category.setProductTypeId(categoryDto.getProductTypeId());
             }
-            category.setProductTypeId(categoryDto.getProductTypeId());
             category.setName(categoryDto.getName());
             category.setDescription(categoryDto.getDescription());
             category.setStatus(categoryDto.getStatus());
@@ -79,6 +79,20 @@ public class CategoryServiceImpl implements CategoryService {
             Boolean statusValue = status != null ? status : null;
             Long productTypeIdValue = productTypeId != null ? productTypeId : null;
             return categoryRepository.findAllByConditions(nameValue, statusValue, productTypeIdValue);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public Category getCategoryById(Long id) throws Exception {
+        try {
+            Category category = categoryRepository.getById(id);
+            if (category == null) {
+                throw new Exception(Constants.CATEGORY_NOT_FOUND);
+            }
+            return category;
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
