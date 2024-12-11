@@ -1,6 +1,7 @@
 package com.coverstar.repository;
 
 import com.coverstar.entity.Product;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,8 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND (COALESCE(:shippingMethodIds, NULL) IS NULL OR sm.id IN :shippingMethodIds) " +
             "AND (:productTypeId IS NULL OR p.productTypeId = :productTypeId) " +
             "AND a.type = 1 " +
-            "AND p.status = :status " +
-            "ORDER BY p.createdDate DESC")
+            "AND p.status = :status")
     List<Product> findByNameContainingAndPriceBetweenWithDetails(
             @Param("productTypeId") Long productTypeId,
             @Param("name") String name,
@@ -34,7 +34,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("brandId") Long brandId,
             @Param("categoryId") Long categoryId,
             @Param("shippingMethodIds") List<Long> shippingMethodIds,
-            @Param("status") Boolean status);
+            @Param("status") Boolean status,
+            Pageable pageable);
 
 
     @Query("SELECT p " +
