@@ -63,10 +63,6 @@ public class ProductServiceImpl implements ProductService {
             }
             product.setProductName(productName);
             product.setProductTypeId(productTypeId);
-            product.setQuantity(quantity);
-            product.setPrice(price);
-            product.setPriceBeforeDiscount(priceBeforeDiscount);
-            product.setColor(color);
             product.setSize(size);
             product.setDescription(description);
 
@@ -122,7 +118,9 @@ public class ProductServiceImpl implements ProductService {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             BigDecimal minPriceValue = minPrice != null ? minPrice : BigDecimal.ZERO;
             BigDecimal maxPriceValue = maxPrice != null ? maxPrice : BigDecimal.valueOf(Double.MAX_VALUE);
-            return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue, minPriceValue, maxPriceValue);
+            return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue
+//                    , minPriceValue, maxPriceValue
+            );
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

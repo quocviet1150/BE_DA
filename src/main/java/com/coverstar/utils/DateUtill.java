@@ -1,4 +1,4 @@
-package com.coverstar.constant;
+package com.coverstar.utils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

@@ -5,7 +5,6 @@ import com.coverstar.entity.Comment;
 import com.coverstar.entity.Image;
 import com.coverstar.entity.Product;
 import com.coverstar.repository.CommentRepository;
-import com.coverstar.repository.ImageRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,6 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -38,7 +35,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment createComment(CommentDto commentDto, List<MultipartFile> imageFiles) throws Exception {
         try {
             Product product = productRepository.getProductById(commentDto.getProductId());
-            Integer evaluate = getEvaluate(commentDto, product);
+            Float evaluate = getEvaluate(commentDto, product);
             product.setEvaluate(evaluate);
             productRepository.save(product);
 
@@ -100,17 +97,18 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    private static Integer getEvaluate(CommentDto commentDto, Product product) {
-        Integer productEvaluate = product.getEvaluate() != null ? product.getEvaluate() : 0;
-        Integer commentEvaluate = commentDto.getEvaluateProduct() != null ? commentDto.getEvaluateProduct() : 0;
-        Integer evaluate;
-        if (productEvaluate == 0) {
-            evaluate = commentEvaluate;
-        } else if (commentEvaluate == 0) {
-            evaluate = productEvaluate;
-        } else {
-            evaluate = (productEvaluate + commentEvaluate) / 2;
+    private static Float getEvaluate(CommentDto commentDto, Product product) {
+        float productEvaluate = product.getEvaluate() != null ? product.getEvaluate() : 0f;
+        int commentEvaluate = commentDto.getEvaluateProduct() != null ? commentDto.getEvaluateProduct() : 0;
+        if (productEvaluate == 0f && commentEvaluate == 0) {
+            return 0f;
         }
-        return evaluate;
+        if (commentEvaluate == 0) {
+            return productEvaluate;
+        }
+        if (productEvaluate == 0f) {
+            return (float) commentEvaluate;
+        }
+        return (productEvaluate + commentEvaluate) / 2;
     }
 }

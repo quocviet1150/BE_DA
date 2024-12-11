@@ -54,7 +54,7 @@ public class Product {
     private Date updatedDate;
 
     @Column(name = "evaluate")
-    private Integer evaluate;
+    private Float evaluate;
 
     @Column(name = "number_of_visits")
     private Long numberOfVisits;

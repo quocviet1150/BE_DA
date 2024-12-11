@@ -36,8 +36,8 @@ public class ProductDetail implements Serializable {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "price_before_discount", nullable = false)
-    private BigDecimal priceBeforeDiscount;
+    @Column(name = "percentage_reduction", nullable = false)
+    private Float percentageReduction;
 
     @Column(name = "created_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

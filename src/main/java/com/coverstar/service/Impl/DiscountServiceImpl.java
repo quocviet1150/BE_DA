@@ -1,14 +1,14 @@
 package com.coverstar.service.Impl;
 
-import com.coverstar.constant.DateUtill;
 import com.coverstar.entity.Account;
 import com.coverstar.entity.Discount;
 import com.coverstar.repository.AccountRepository;
 import com.coverstar.repository.DiscountRepository;
 import com.coverstar.service.DiscountService;
+import com.coverstar.utils.DateUtill;
+import com.coverstar.utils.ShopUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,9 +27,6 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Autowired
     private AccountRepository accountRepository;
-
-    @Value("${image.directory}")
-    private String imageDirectory;
 
     @Override
     public Discount createOrUpdateDiscount(Long id, String name, String code,
@@ -81,7 +78,7 @@ public class DiscountServiceImpl implements DiscountService {
                         oldFile.delete();
                     }
                 }
-                String fullPath = handleFileUpload(imageFile, "discount", discount.getId());
+                String fullPath = ShopUtil.handleFileUpload(imageFile, "discount", discount.getId());
                 discount.setDirectoryPath(fullPath);
             }
             discountRepository.save(discount);
@@ -149,16 +146,5 @@ public class DiscountServiceImpl implements DiscountService {
             e.fillInStackTrace();
             throw e;
         }
-    }
-
-    private String handleFileUpload(MultipartFile file, String type, Long id) throws Exception {
-        String filePath = imageDirectory + type + File.separator + id;
-        File directory = new File(filePath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        String fullPath = filePath + File.separator + file.getOriginalFilename();
-        file.transferTo(new File(fullPath));
-        return fullPath;
     }
 }

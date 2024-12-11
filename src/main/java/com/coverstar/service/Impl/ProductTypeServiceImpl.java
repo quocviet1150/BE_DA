@@ -1,14 +1,14 @@
 package com.coverstar.service.Impl;
 
 import com.coverstar.dto.ProductTypeSearchDto;
-import com.coverstar.entity.ProductType;
 import com.coverstar.entity.Product;
-import com.coverstar.repository.ProductTypeRepository;
+import com.coverstar.entity.ProductType;
 import com.coverstar.repository.ProductRepository;
-import com.coverstar.service.ProductTypeService;
+import com.coverstar.repository.ProductTypeRepository;
 import com.coverstar.service.ProductService;
+import com.coverstar.service.ProductTypeService;
+import com.coverstar.utils.ShopUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,9 +28,6 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     @Autowired
     private ProductService productService;
-
-    @Value("${image.directory}")
-    private String imageDirectory;
 
     @Override
     public ProductType createOrUpdateProductType(Long id, String name, MultipartFile imageFile, String description) throws Exception {
@@ -64,7 +61,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
                         oldFile.delete();
                     }
                 }
-                String fullPath = handleFileUpload(imageFile, "productType", productType.getId());
+                String fullPath = ShopUtil.handleFileUpload(imageFile, "productType", productType.getId());
                 productType.setDirectoryPath(fullPath);
             }
             productTypeRepository.save(productType);
@@ -144,16 +141,5 @@ public class ProductTypeServiceImpl implements ProductTypeService {
             e.fillInStackTrace();
             throw e;
         }
-    }
-
-    private String handleFileUpload(MultipartFile file, String type, Long id) throws Exception {
-        String filePath = imageDirectory + type + File.separator + id;
-        File directory = new File(filePath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        String fullPath = filePath + File.separator + file.getOriginalFilename();
-        file.transferTo(new File(fullPath));
-        return fullPath;
     }
 }
