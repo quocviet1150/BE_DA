@@ -2,7 +2,7 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.component.mail.Mail;
 import com.coverstar.component.mail.MailService;
-import com.coverstar.constant.RandomUtil;
+import com.coverstar.utils.RandomUtil;
 import com.coverstar.dao.account.AccountDao;
 import com.coverstar.dao.verify_account.VerifyAccountDao;
 import com.coverstar.dto.*;

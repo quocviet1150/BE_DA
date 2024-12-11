@@ -4,7 +4,7 @@
  * https://www.youtube.com/channel/UClcEDDeJvnJ69p-n7XsRqHQ Instagram:
  * coverstarstory
  */
-package com.coverstar.constant;
+package com.coverstar.utils;
 
 import java.security.SecureRandom;
 import java.util.Random;

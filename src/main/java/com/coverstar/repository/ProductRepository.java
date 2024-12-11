@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -15,10 +14,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "FROM Product p " +
             "INNER JOIN Image a ON p.id = a.productId " +
             "WHERE p.productName LIKE CONCAT('%', :name, '%') " +
-            "AND p.price BETWEEN :minPrice AND :maxPrice " +
+//            "AND p.price BETWEEN :minPrice AND :maxPrice " +
             "AND (:productTypeId IS NULL OR p.productTypeId = :productTypeId) " +
             "AND a.type = 1 ORDER BY p.createdDate DESC")
-    List<Product> findByNameContainingAndPriceBetweenWithDetails(Long productTypeId, String name, BigDecimal minPrice, BigDecimal maxPrice);
+    List<Product> findByNameContainingAndPriceBetweenWithDetails(Long productTypeId, String name
+//            , BigDecimal minPrice, BigDecimal maxPrice
+    );
 
     @Query("SELECT p " +
             "FROM Product p " +
