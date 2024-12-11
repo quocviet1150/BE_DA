@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,4 +14,9 @@ public class SearchProductDto implements Serializable {
     private String name;
     private BigDecimal minPrice;
     private BigDecimal maxPrice;
+    private Boolean status;
+    private Long brandId;
+    private Long categoryId;
+    private List<String> shippingMethodIds;
+    private String orderBy;
 }

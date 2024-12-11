@@ -1,5 +1,7 @@
 package com.coverstar.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +27,7 @@ import java.util.Set;
 @Table(name = "PRODUCTS")
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +38,12 @@ public class Product {
 
     @Column(name = "productType_id", nullable = false)
     private Long productTypeId;
+
+    @Column(name = "brand_id", nullable = false)
+    private Long brandId;
+
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
 
     @Column(name = "price", nullable = false)
     private BigDecimal price;
@@ -76,4 +85,12 @@ public class Product {
 
     @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProductDetail> productDetails;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "product_shipping_methods",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "shipping_method_id")
+    )
+    private Set<ShippingMethod> shippingMethods;
 }

@@ -41,7 +41,11 @@ public class ProductController {
                                                    @RequestParam(value = "imageIdsToRemove", required = false) String imageIdsToRemove,
                                                    @RequestParam MultiValueMap<String, String> productDetailsParams,
                                                    @RequestParam(value = "productDetailsFiles", required = false) List<MultipartFile> productDetailsFiles,
-                                                   @RequestParam(value = "listProductDetailIdRemove", required = false) String listProductDetailIdRemove){
+                                                   @RequestParam(value = "listProductDetailIdRemove", required = false) String listProductDetailIdRemove,
+                                                   @RequestParam List<String> shippingMethodIds,
+                                                   @RequestParam Long brandId,
+                                                   @RequestParam Long categoryId,
+                                                   @RequestParam("status") Boolean status) {
         try {
 
             Product product = productService.saveOrUpdateProduct(
@@ -56,7 +60,11 @@ public class ProductController {
                     imageIdsToRemove,
                     productDetailsParams,
                     productDetailsFiles,
-                    listProductDetailIdRemove);
+                    listProductDetailIdRemove,
+                    shippingMethodIds,
+                    brandId,
+                    categoryId,
+                    status);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             if (Objects.equals(e.getMessage(), "ProductDetail not found")) {
@@ -69,11 +77,7 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<List<Product>> search(@RequestBody @Valid SearchProductDto searchProductDto) {
         try {
-            List<Product> products = productService.findByNameAndPriceRange(
-                    searchProductDto.getProductTypeId(),
-                    searchProductDto.getName(),
-                    searchProductDto.getMinPrice(),
-                    searchProductDto.getMaxPrice());
+            List<Product> products = productService.findByNameAndPriceRange(searchProductDto);
             return ResponseEntity.ok(products);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

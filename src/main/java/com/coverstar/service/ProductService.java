@@ -1,5 +1,6 @@
 package com.coverstar.service;
 
+import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.Product;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,12 +21,13 @@ public interface ProductService {
                                 String imageIdsToRemove,
                                 MultiValueMap<String, String> productDetailsParams,
                                 List<MultipartFile> productDetailsFiles,
-                                String listProductDetailIdRemove) throws Exception;
+                                String listProductDetailIdRemove,
+                                List<String> shippingMethodIds,
+                                Long brandId,
+                                Long categoryId,
+                                Boolean status) throws Exception;
 
-    List<Product> findByNameAndPriceRange(Long productTypeId,
-                                          String name,
-                                          BigDecimal minPrice,
-                                          BigDecimal maxPrice);
+    List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto);
 
     Product getProductById(Long id);
 
