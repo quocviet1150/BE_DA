@@ -1,6 +1,7 @@
 package com.coverstar.service;
 
 import com.coverstar.dto.CommentDto;
+import com.coverstar.dto.ProductDetailDTO;
 import com.coverstar.entity.Comment;
 import com.coverstar.entity.Product;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,14 +14,12 @@ public interface ProductService {
     Product saveOrUpdateProduct(Long id,
                                 String productName,
                                 Long productTypeId,
-                                Long quantity,
-                                BigDecimal price,
-                                BigDecimal priceBeforeDiscount,
-                                String color,
                                 String size,
                                 String description,
                                 List<MultipartFile> imageFiles,
-                                List<Long> imageIdsToRemove) throws Exception;
+                                List<Long> imageIdsToRemove,
+                                List<ProductDetailDTO> productDetails
+    ) throws Exception;
 
     List<Product> findByNameAndPriceRange(Long productTypeId,
                                           String name,
