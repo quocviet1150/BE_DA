@@ -25,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND (COALESCE(:shippingMethodIds, NULL) IS NULL OR sm.id IN :shippingMethodIds) " +
             "AND (:productTypeId IS NULL OR p.productTypeId = :productTypeId) " +
             "AND a.type = 1 " +
-            "AND p.status = :status")
+            "AND (:status IS NULL OR p.status = :status)")
     List<Product> findByNameContainingAndPriceBetweenWithDetails(
             @Param("productTypeId") Long productTypeId,
             @Param("name") String name,
@@ -48,4 +48,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Product getProductById(Long id);
 
     List<Product> findAllByProductTypeId(Long id);
+
+    List<Product> findAllByBrandId(Long id);
+
+    List<Product> findAllByCategoryId(Long id);
 }

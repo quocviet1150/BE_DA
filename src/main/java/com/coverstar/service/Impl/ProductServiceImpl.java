@@ -252,12 +252,25 @@ public class ProductServiceImpl implements ProductService {
             List<Long> shippingMethodIds = searchProductDto.getShippingMethodIds().stream()
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
-            Boolean status = searchProductDto.getStatus() != null ? searchProductDto.getStatus() : true;
-            String orderBy = searchProductDto.getOrderBy() != null ? searchProductDto.getOrderBy() : "DESC";
-            Sort sort = "ASC".equalsIgnoreCase(orderBy)
-                    ? Sort.by("createdDate").ascending()
-                    : Sort.by("createdDate").descending();
-            Pageable pageable = PageRequest.of(1, 1, sort);
+            Boolean status = searchProductDto.getStatus() != null ? searchProductDto.getStatus() : null;
+            String orderBy = searchProductDto.getOrderBy() != null ? searchProductDto.getOrderBy() : Constants.DESC;
+            String priceOrder = searchProductDto.getPriceOrder() != null ? searchProductDto.getPriceOrder() : Constants.DESC;
+
+            Sort sort;
+            if (Constants.ASC.equalsIgnoreCase(orderBy)) {
+                if (Constants.ASC.equalsIgnoreCase(priceOrder)) {
+                    sort = Sort.by(Sort.Order.asc(Constants.PRICE)).and(Sort.by(Sort.Order.asc(Constants.CREATED_DATE)));
+                } else {
+                    sort = Sort.by(Sort.Order.desc(Constants.PRICE)).and(Sort.by(Sort.Order.asc(Constants.CREATED_DATE)));
+                }
+            } else {
+                if (Constants.ASC.equalsIgnoreCase(priceOrder)) {
+                    sort = Sort.by(Sort.Order.asc(Constants.PRICE)).and(Sort.by(Sort.Order.desc(Constants.CREATED_DATE)));
+                } else {
+                    sort = Sort.by(Sort.Order.desc(Constants.PRICE)).and(Sort.by(Sort.Order.desc(Constants.CREATED_DATE)));
+                }
+            }
+            Pageable pageable = PageRequest.of(searchProductDto.getPage(), searchProductDto.getSize(), sort);
             return productRepository.findByNameContainingAndPriceBetweenWithDetails(productTypeId, nameValue,
                     minPriceValue, maxPriceValue, brandId, categoryId, shippingMethodIds, status, pageable);
         } catch (Exception e) {
