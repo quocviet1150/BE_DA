@@ -29,7 +29,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/createOrUpdateProduct")
+    @PostMapping("/admin/createOrUpdateProduct")
     public ResponseEntity<?> createOrUpdateProduct(@RequestParam(value = "id", required = false) Long id,
                                                    @RequestParam("productName") String productName,
                                                    @RequestParam("productTypeId") Long productTypeId,
@@ -94,7 +94,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/deleteProduct/{id}")
+    @PostMapping("/admin/deleteProduct/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         try {
             productService.deleteProductById(id);
@@ -107,7 +107,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/updateStatus")
+    @PostMapping("/admin/updateStatus")
     public ResponseEntity<?> updateStatus(@RequestParam("id") Long id,
                                           @RequestParam("type") Boolean type) {
         try {

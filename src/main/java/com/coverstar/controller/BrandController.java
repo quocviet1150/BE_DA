@@ -24,7 +24,7 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
-    @PostMapping("/createOrUpdate")
+    @PostMapping("/admin/createOrUpdate")
     public ResponseEntity<?> createOrUpdate(@RequestBody @Valid BrandOrCategoryDto brandOrCategoryDto) {
         try {
             Brand brand = brandService.createOrUpdate(brandOrCategoryDto);
@@ -60,7 +60,7 @@ public class BrandController {
         }
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/admin/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {
             brandService.delete(id);

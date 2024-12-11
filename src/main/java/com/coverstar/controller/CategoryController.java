@@ -24,7 +24,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/createOrUpdate")
+    @PostMapping("/admin/createOrUpdate")
     public ResponseEntity<?> createOrUpdate(@RequestBody @Valid BrandOrCategoryDto categoryDto) {
         try {
             Category category = categoryService.createOrUpdate(categoryDto);
@@ -37,7 +37,7 @@ public class CategoryController {
         }
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/admin/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {
             categoryService.delete(id);

@@ -19,7 +19,7 @@ public class DiscountController {
     @Autowired
     private DiscountService discountService;
 
-    @PostMapping("/createOrUpdateDiscount")
+    @PostMapping("/admin/createOrUpdateDiscount")
     public ResponseEntity<?> createOrUpdateDiscount(
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam("name") String name,
@@ -67,7 +67,7 @@ public class DiscountController {
         }
     }
 
-    @PostMapping("/deleteDiscount/{id}")
+    @PostMapping("/admin/deleteDiscount/{id}")
     public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
         try {
             discountService.deleteDiscount(id);
@@ -77,7 +77,7 @@ public class DiscountController {
         }
     }
 
-    @PostMapping("/updateStatus/{id}")
+    @PostMapping("/admin/updateStatus/{id}")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status") boolean status) {
         try {
             Discount discount = discountService.updateStatus(id, status);

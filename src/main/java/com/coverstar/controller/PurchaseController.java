@@ -25,7 +25,7 @@ public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
 
-    @PostMapping("createPurchase")
+    @PostMapping("/createPurchase")
     public ResponseEntity<?> createPurchase(@RequestBody @Valid List<PurchaseDto> purchases) {
         try {
             List<Purchase> purchaseList = purchaseService.createPurchase(purchases);
@@ -35,7 +35,7 @@ public class PurchaseController {
         }
     }
 
-    @PostMapping("updateFirstWave/{id}")
+    @PostMapping("/updateFirstWave/{id}")
     public ResponseEntity<?> updateFirstWave(@PathVariable Long id, @RequestParam Long addressId) {
         try {
             Purchase purchase = purchaseService.updateFirstWave(id, addressId);
@@ -48,7 +48,7 @@ public class PurchaseController {
         }
     }
 
-    @PostMapping("updateStatus/{id}")
+    @PostMapping("/updateStatus/{id}")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam Integer status) {
         try {
             Purchase purchase = purchaseService.updateStatus(id, status);
@@ -61,7 +61,7 @@ public class PurchaseController {
         }
     }
 
-    @GetMapping("getPurchaseByUserId/{userId}")
+    @GetMapping("/getPurchaseByUserId/{userId}")
     public ResponseEntity<?> getPurchaseByUserId(@PathVariable Long userId, @RequestParam String productName) {
         try {
             List<Purchase> purchases = purchaseService.getPurchaseByUserId(userId, productName);
@@ -71,7 +71,7 @@ public class PurchaseController {
         }
     }
 
-    @GetMapping("getAllPurchase")
+    @GetMapping("/admin/getAllPurchase")
     public ResponseEntity<?> getAllPurchase(@RequestParam Long userId,
                                             @RequestParam String paymentMethod,
                                             @RequestParam Integer status) {
