@@ -143,4 +143,18 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting all account");
         }
     }
+
+    @PostMapping("/admin/lock-account/{usernameOrEmail}")
+    public ResponseEntity<?> lockAccount(@PathVariable String usernameOrEmail) {
+        try {
+            if (StringUtils.isBlank(usernameOrEmail)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("usernameOrEmail is required");
+            }
+
+            accountService.lockAccount(usernameOrEmail);
+            return ResponseEntity.ok("Account locked successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error locking account");
+        }
+    }
 }

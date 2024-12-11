@@ -56,16 +56,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Map<String, String> authenticateUser(LoginDto loginDto) {
         try {
-
             Account account = getEmailOrUser(loginDto.getUsernameOrEmail());
-
             if (account.isLocked()) {
                 throw new BadCredentialsException("Account is locked");
             }
-
+            if (account.getCountLock() < 5) {
+                account.setCountLock(0);
+                accountDao.update(account);
+            }
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginDto.getUsernameOrEmail(), loginDto.getPassword()));
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
@@ -316,5 +316,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> getAllAccount() {
         return accountRepository.findAll();
+    }
+
+    @Override
+    public void lockAccount(String usernameOrEmail) {
+        try {
+            Account account = getEmailOrUser(usernameOrEmail);
+            account.setLocked(true);
+            accountDao.update(account);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+        }
     }
 }

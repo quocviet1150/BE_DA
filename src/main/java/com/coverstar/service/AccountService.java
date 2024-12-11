@@ -34,4 +34,6 @@ public interface AccountService {
 	void unlockAccount(String usernameOrEmail);
 
 	List<Account> getAllAccount();
+
+	void lockAccount(String usernameOrEmail);
 }
