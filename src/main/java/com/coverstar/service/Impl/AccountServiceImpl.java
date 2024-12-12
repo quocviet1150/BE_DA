@@ -221,7 +221,7 @@ public class AccountServiceImpl implements AccountService {
 
             Mail mail = new Mail();
             mail.setFrom("postmaster@mg.iteacode.com");
-            mail.setSubject("Registration");
+            mail.setSubject("Mail xác nhận đăng ký.");
             mail.setTo(account.getEmail());
             mail.setModel(maps);
             mailService.sendEmail(mail);
@@ -250,7 +250,7 @@ public class AccountServiceImpl implements AccountService {
 
             Mail mail = new Mail();
             mail.setFrom("postmaster@mg.iteacode.com");
-            mail.setSubject("Registration");
+            mail.setSubject("Mail xác nhận đăng ký.");
             mail.setTo(account.getEmail());
             mail.setModel(maps);
             mailService.sendEmail(mail);
