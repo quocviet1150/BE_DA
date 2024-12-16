@@ -3,16 +3,9 @@ package com.coverstar.service.Impl;
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.ProductDetailDTO;
 import com.coverstar.dto.SearchProductDto;
-import com.coverstar.entity.Comment;
-import com.coverstar.entity.Image;
-import com.coverstar.entity.Product;
-import com.coverstar.entity.ProductDetail;
-import com.coverstar.entity.ShippingMethod;
-import com.coverstar.repository.CommentRepository;
-import com.coverstar.repository.ImageRepository;
-import com.coverstar.repository.ProductDetailRepository;
-import com.coverstar.repository.ProductRepository;
-import com.coverstar.repository.ShippingMethodRepository;
+import com.coverstar.entity.*;
+import com.coverstar.repository.*;
+import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +49,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ShippingMethodRepository shippingMethodRepository;
+
+    @Autowired
+    private BrandService brandService;
+
+    @Autowired
+    private BrandRepository brandRepository;
 
     @Override
     public Product saveOrUpdateProduct(Long id,
@@ -240,13 +239,24 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto) {
+    public List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto) throws Exception {
         try {
             String nameValue = searchProductDto.getName() != null ? searchProductDto.getName() : StringUtils.EMPTY;
             BigDecimal minPriceValue = searchProductDto.getMinPrice() != null ? searchProductDto.getMinPrice() : BigDecimal.ZERO;
             BigDecimal maxPriceValue = searchProductDto.getMaxPrice() != null ? searchProductDto.getMaxPrice() : BigDecimal.valueOf(Double.MAX_VALUE);
             Long productTypeId = searchProductDto.getProductTypeId() != null ? searchProductDto.getProductTypeId() : 0L;
             Long brandId = searchProductDto.getBrandId() != null ? searchProductDto.getBrandId() : 0L;
+            if (searchProductDto.getBrandId() != null){
+                Brand brand = brandService.getBrandById(searchProductDto.getBrandId());
+                long numberOfVisits;
+                if (brand.getNumberOfVisits() == null) {
+                    numberOfVisits = 1L;
+                } else {
+                    numberOfVisits = brand.getNumberOfVisits() + 1;
+                }
+                brand.setNumberOfVisits(numberOfVisits);
+                brandRepository.save(brand);
+            }
             Long categoryId = searchProductDto.getCategoryId() != null ? searchProductDto.getCategoryId() : 0L;
             List<Long> shippingMethodIds = searchProductDto.getShippingMethodIds().stream()
                     .map(Long::parseLong)

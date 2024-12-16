@@ -40,9 +40,11 @@ public class BrandController {
     @GetMapping("/getAllBrand")
     public ResponseEntity<?> getAllBrand(@RequestParam(value = "productTypeId", required = false) Long productTypeId,
                                          @RequestParam(value = "name", required = false) String name,
-                                         @RequestParam(value = "status", required = false) Boolean status) {
+                                         @RequestParam(value = "status", required = false) Boolean status,
+                                         @RequestParam(value = "page", required = false) Integer page,
+                                         @RequestParam(value = "size", required = false) Integer size) {
         try {
-            return ResponseEntity.ok(brandService.getAllBrand(productTypeId, name, status));
+            return ResponseEntity.ok(brandService.getAllBrand(productTypeId, name, status, page, size));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }

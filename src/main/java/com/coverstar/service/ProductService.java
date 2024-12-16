@@ -27,7 +27,7 @@ public interface ProductService {
                                 Long categoryId,
                                 Boolean status) throws Exception;
 
-    List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto);
+    List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto) throws Exception;
 
     Product getProductById(Long id);
 

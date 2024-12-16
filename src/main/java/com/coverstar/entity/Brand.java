@@ -38,4 +38,7 @@ public class Brand {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "number_of_visits")
+    private Long numberOfVisits;
 }

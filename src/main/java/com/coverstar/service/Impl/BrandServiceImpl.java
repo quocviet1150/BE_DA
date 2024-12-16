@@ -10,6 +10,8 @@ import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -29,7 +31,7 @@ public class BrandServiceImpl implements BrandService {
     private ProductService productService;
 
     @Override
-    public Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) throws Exception {
+    public Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) {
         try {
             Brand brand = new Brand();
             if (brandOrCategoryDto.getId() != null) {
@@ -72,12 +74,13 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public List<Brand> getAllBrand(Long productTypeId, String name, Boolean status) {
+    public List<Brand> getAllBrand(Long productTypeId, String name, Boolean status, Integer page, Integer size) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             Long productTypeIdValue = productTypeId != null ? productTypeId : null;
             Boolean statusValue = status != null ? status : null;
-            return brandRepository.findAllByConditions(productTypeIdValue, nameValue, statusValue);
+            Pageable pageable = PageRequest.of(page, size);
+            return brandRepository.findAllByConditions(productTypeIdValue, nameValue, statusValue, pageable);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
