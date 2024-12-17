@@ -38,7 +38,7 @@ public class ShippingMethodServiceImpl implements ShippingMethodService {
             if (shippingMethodDto.getId() != null) {
                 shippingMethod = shippingMethodRepository.findById(shippingMethodDto.getId()).orElse(null);
                 if (shippingMethod == null) {
-                    throw new Exception("Shipping method not found");
+                    throw new Exception(Constants.DUPLICATE_SHIPPING);
                 }
                 shippingMethod.setUpdatedDate(new Date());
             } else {
@@ -61,7 +61,7 @@ public class ShippingMethodServiceImpl implements ShippingMethodService {
         try {
             ShippingMethod shippingMethod = shippingMethodRepository.findById(id).orElse(null);
             if (shippingMethod == null) {
-                throw new Exception(Constants.SHIPPING_METHOD_NOT_FOUND);
+                throw new Exception(Constants.DUPLICATE_SHIPPING);
             }
             for (Product product : shippingMethod.getProducts()) {
                 product.getShippingMethods().remove(shippingMethod);
@@ -79,7 +79,7 @@ public class ShippingMethodServiceImpl implements ShippingMethodService {
         try {
             ShippingMethod shippingMethod = shippingMethodRepository.findById(id).orElse(null);
             if (shippingMethod == null) {
-                throw new Exception(Constants.SHIPPING_METHOD_NOT_FOUND);
+                throw new Exception(Constants.DUPLICATE_SHIPPING);
             }
             return shippingMethod;
         } catch (Exception e) {

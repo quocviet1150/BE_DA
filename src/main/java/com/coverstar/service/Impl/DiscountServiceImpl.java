@@ -1,5 +1,6 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.constant.Constants;
 import com.coverstar.entity.Account;
 import com.coverstar.entity.Discount;
 import com.coverstar.repository.AccountRepository;
@@ -41,7 +42,7 @@ public class DiscountServiceImpl implements DiscountService {
                     : discountRepository.existsByCodeAndIdNot(code, id);
 
             if (isCodeExist) {
-                throw new Exception("Discount code already exists");
+                throw new Exception(Constants.DUPLICATE_DISCOUNT);
             }
 
             if (id != null) {
@@ -49,6 +50,9 @@ public class DiscountServiceImpl implements DiscountService {
                 discount.setUpdatedDate(new Date());
                 discount.setStatus(true);
             } else {
+                if (imageFile == null || imageFile.isEmpty()) {
+                    throw new Exception(Constants.NOT_IMAGE);
+                }
                 discount.setCreatedDate(new Date());
                 discount.setStatus(true);
             }

@@ -15,8 +15,16 @@ public class Constants {
     public static final String NUMBER_OF_VISITS = "numberOfVisits";
     public static final String BRAND_NOT_FOUND = "Brand not found";
     public static final String CATEGORY_NOT_FOUND = "Category not found";
-    public static final String SUCCESS = "Success";
-    public static final String SHIPPING_METHOD_NOT_FOUND = "Shipping method not found";
+    public static final String NOT_IMAGE = "Image field cannot be left blank";
+    public static final String DUPLICATE_DISCOUNT = "Discount code already exists";
+    public static final String DUPLICATE_PRODUCT_TYPE = "Product Type name already exists";
+    public static final String DUPLICATE_SHIPPING = "Shipping method not found";
+    public static final String DUPLICATE_EMAIL = "Email already exists";
+    public static final String DUPLICATE_USERNAME = "Username already exists";
+    public static final String DUPLICATE_USERNAME_EMAIL = "usernameOrEmail is required";
+    public static final String LOCK_ACCOUNT = "Account is locked";
+    public static final String INVALID_USERNAME = "Invalid username or password";
+    public static final String INVALID_PASSWORD = "New password and confirm password do not match";
 
 
     public static final class Number {

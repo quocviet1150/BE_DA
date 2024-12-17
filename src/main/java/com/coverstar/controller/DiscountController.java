@@ -36,8 +36,13 @@ public class DiscountController {
                     description, percent, imageFiles, expiredDate, discountIds, discountType, levelApplied);
             return ResponseEntity.ok(discount);
         } catch (Exception e) {
-            if (e.getMessage().equals("Discount code already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Discount code already exists");
+
+            if (e.getMessage().equals(Constants.NOT_IMAGE)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.NOT_IMAGE);
+            }
+
+            if (e.getMessage().equals(Constants.DUPLICATE_DISCOUNT)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.DUPLICATE_DISCOUNT);
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
@@ -71,7 +76,7 @@ public class DiscountController {
     public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
         try {
             discountService.deleteDiscount(id);
-            return ResponseEntity.ok("Discount deleted successfully");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }

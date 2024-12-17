@@ -33,7 +33,7 @@ public class AddressController {
     public ResponseEntity<?> deleteAddress(@PathVariable Long id) {
         try {
             addressService.deleteAddress(id);
-            return ResponseEntity.ok("Address deleted successfully");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }

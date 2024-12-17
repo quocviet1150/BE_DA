@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Getter
@@ -18,4 +18,5 @@ public class BrandOrCategoryDto implements Serializable {
     private String name;
     private Boolean status;
     private String description;
+    private MultipartFile imageFiles;
 }

@@ -1,5 +1,6 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.constant.Constants;
 import com.coverstar.dto.ProductTypeSearchDto;
 import com.coverstar.entity.Brand;
 import com.coverstar.entity.Category;
@@ -56,7 +57,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
                     : productTypeRepository.existsByNameAndIdNot(name, id);
 
             if (isNameExist) {
-                throw new Exception("Product Type name already exists");
+                throw new Exception(Constants.DUPLICATE_PRODUCT_TYPE);
             }
 
             if (id != null) {

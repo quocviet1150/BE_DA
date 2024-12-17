@@ -6,7 +6,7 @@ import com.coverstar.entity.Brand;
 import java.util.List;
 
 public interface BrandService {
-    Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto);
+    Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) throws Exception;
 
     void delete(Long id) throws Exception;
 

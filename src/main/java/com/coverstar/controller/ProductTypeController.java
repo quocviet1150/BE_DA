@@ -21,15 +21,15 @@ public class ProductTypeController {
 
     @PostMapping("/admin/createOrUpdateProductType")
     public ResponseEntity<?> createOrUpdateProductType(@RequestParam(value = "id", required = false) Long id,
-                                             @RequestParam("name") String name,
-                                             @RequestParam(value = "file", required = false) MultipartFile imageFiles,
-                                             @RequestParam("description") String description) {
+                                                       @RequestParam("name") String name,
+                                                       @RequestParam("file") MultipartFile imageFiles,
+                                                       @RequestParam("description") String description) {
         try {
             ProductType productType = productTypeService.createOrUpdateProductType(id, name, imageFiles, description);
             return ResponseEntity.ok(productType);
         } catch (Exception e) {
-            if (e.getMessage().equals("Product Type name already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Product Type name already exists");
+            if (e.getMessage().equals(Constants.DUPLICATE_PRODUCT_TYPE)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.DUPLICATE_PRODUCT_TYPE);
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
@@ -62,7 +62,7 @@ public class ProductTypeController {
     public ResponseEntity<?> deleteProductType(@PathVariable Long id) {
         try {
             productTypeService.deleteProductType(id);
-            return ResponseEntity.ok("Product Type deleted successfully");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             if (e.getMessage().equals("Product Type not found")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product Type not found");

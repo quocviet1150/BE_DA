@@ -28,7 +28,7 @@ public class Discount {
     @Column(name = "code", nullable = false)
     private String code;
 
-    @Column(name = "directory_path")
+    @Column(name = "directory_path", nullable = false)
     private String directoryPath;
 
     @Column(name = "description")

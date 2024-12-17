@@ -35,8 +35,8 @@ public class ShippingMethodController {
             ShippingMethod shippingMethod = shippingMethodService.createOrUpdate(shippingMethodDto);
             return ResponseEntity.ok(shippingMethod);
         } catch (Exception e) {
-            if (e.getMessage().equals(Constants.SHIPPING_METHOD_NOT_FOUND)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.SHIPPING_METHOD_NOT_FOUND);
+            if (e.getMessage().equals(Constants.DUPLICATE_SHIPPING)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.DUPLICATE_SHIPPING);
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
@@ -46,10 +46,10 @@ public class ShippingMethodController {
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {
             shippingMethodService.delete(id);
-            return ResponseEntity.ok(Constants.SUCCESS);
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
-            if (e.getMessage().equals(Constants.SHIPPING_METHOD_NOT_FOUND)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.SHIPPING_METHOD_NOT_FOUND);
+            if (e.getMessage().equals(Constants.DUPLICATE_SHIPPING)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.DUPLICATE_SHIPPING);
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
@@ -60,8 +60,8 @@ public class ShippingMethodController {
         try {
             return ResponseEntity.ok(shippingMethodService.getShippingMethodById(id));
         } catch (Exception e) {
-            if (e.getMessage().equals(Constants.SHIPPING_METHOD_NOT_FOUND)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.SHIPPING_METHOD_NOT_FOUND);
+            if (e.getMessage().equals(Constants.DUPLICATE_SHIPPING)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.DUPLICATE_SHIPPING);
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }

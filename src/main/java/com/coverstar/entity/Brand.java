@@ -30,6 +30,9 @@ public class Brand {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
+    @Column(name = "directory_path", nullable = false)
+    private String directoryPath;
+
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
 

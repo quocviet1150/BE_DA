@@ -8,6 +8,7 @@ import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
+import com.coverstar.utils.ShopUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -34,13 +36,16 @@ public class BrandServiceImpl implements BrandService {
     private ProductService productService;
 
     @Override
-    public Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) {
+    public Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) throws Exception {
         try {
             Brand brand = new Brand();
             if (brandOrCategoryDto.getId() != null) {
                 brand = brandRepository.getById(brandOrCategoryDto.getId());
                 brand.setUpdatedDate(new Date());
             } else {
+                if (brandOrCategoryDto.getImageFiles() == null || brandOrCategoryDto.getImageFiles().isEmpty()) {
+                    throw new Exception(Constants.NOT_IMAGE);
+                }
                 brand.setCreatedDate(new Date());
                 brand.setUpdatedDate(new Date());
                 brand.setProductTypeId(brandOrCategoryDto.getProductTypeId());
@@ -48,6 +53,19 @@ public class BrandServiceImpl implements BrandService {
             brand.setName(brandOrCategoryDto.getName());
             brand.setDescription(brandOrCategoryDto.getDescription());
             brand.setStatus(brandOrCategoryDto.getStatus());
+            brand = brandRepository.save(brand);
+
+            if (brandOrCategoryDto.getImageFiles() != null && !brandOrCategoryDto.getImageFiles().isEmpty()) {
+                if (brand.getDirectoryPath() != null) {
+                    File oldFile = new File(brand.getDirectoryPath());
+                    if (oldFile.exists()) {
+                        oldFile.delete();
+                    }
+                }
+                String fullPath = ShopUtil.handleFileUpload(brandOrCategoryDto.getImageFiles(), "brand", brand.getId());
+                brand.setDirectoryPath(fullPath);
+            }
+
             return brandRepository.save(brand);
         } catch (Exception e) {
             e.fillInStackTrace();

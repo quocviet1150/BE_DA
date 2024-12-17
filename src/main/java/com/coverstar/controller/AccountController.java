@@ -32,11 +32,11 @@ public class AccountController {
             accountCreateDto.setId(account.getId());
             return ResponseEntity.ok(accountCreateDto);
         } catch (Exception e) {
-            if (e.getMessage().equals("Email already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+            if (e.getMessage().equals(Constants.DUPLICATE_EMAIL)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.DUPLICATE_EMAIL);
             }
-            if (e.getMessage().equals("Username already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+            if (e.getMessage().equals(Constants.DUPLICATE_USERNAME)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.DUPLICATE_USERNAME);
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
@@ -61,10 +61,10 @@ public class AccountController {
             Map<String, String> response = accountService.authenticateUser(loginDto);
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
-            if (e.getMessage().equals("Account is locked")) {
-                return ResponseEntity.status(HttpStatus.LOCKED).body("Account is locked");
+            if (e.getMessage().equals(Constants.LOCK_ACCOUNT)) {
+                return ResponseEntity.status(HttpStatus.LOCKED).body(Constants.LOCK_ACCOUNT);
             }
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Constants.INVALID_USERNAME);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.VERIFYING_ERROR);
         }
@@ -74,7 +74,7 @@ public class AccountController {
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
         try {
             if (!changePasswordDto.isPasswordsMatch()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New password and confirm password do not match");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.INVALID_PASSWORD);
             }
 
             boolean isPasswordCorrect = accountService.checkPassword(changePasswordDto.getUsernameOrEmail(), changePasswordDto.getOldPassword());
@@ -83,7 +83,7 @@ public class AccountController {
             }
 
             accountService.changePassword(changePasswordDto.getUsernameOrEmail(), changePasswordDto.getNewPassword());
-            return ResponseEntity.ok("Please verify");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error changing password");
         }
@@ -93,11 +93,11 @@ public class AccountController {
     public ResponseEntity<?> forgotPassword(@PathVariable String usernameOrEmail) {
         try {
             if (StringUtils.isBlank(usernameOrEmail)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("usernameOrEmail is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.DUPLICATE_USERNAME_EMAIL);
             }
 
             accountService.forgotPassword(usernameOrEmail);
-            return ResponseEntity.ok("Please check your usernameOrEmail");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
@@ -112,11 +112,11 @@ public class AccountController {
     public ResponseEntity<?> unlockAccount(@PathVariable String usernameOrEmail) {
         try {
             if (StringUtils.isBlank(usernameOrEmail)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("usernameOrEmail is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.DUPLICATE_USERNAME_EMAIL);
             }
 
             accountService.unlockAccount(usernameOrEmail);
-            return ResponseEntity.ok("Account unlocked successfully");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error unlocking account");
         }
@@ -148,11 +148,11 @@ public class AccountController {
     public ResponseEntity<?> lockAccount(@PathVariable String usernameOrEmail) {
         try {
             if (StringUtils.isBlank(usernameOrEmail)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("usernameOrEmail is required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.DUPLICATE_USERNAME_EMAIL);
             }
 
             accountService.lockAccount(usernameOrEmail);
-            return ResponseEntity.ok("Account locked successfully");
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error locking account");
         }

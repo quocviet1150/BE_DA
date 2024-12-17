@@ -26,7 +26,7 @@ public class Image {
     @Column(name = "comment_id")
     private Long commentId;
 
-    @Column(name = "directory_path", nullable = false)
+    @Column(name = "directory_path")
     private String directoryPath;
 
     @Column(name = "type", nullable = false)

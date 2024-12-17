@@ -7,6 +7,7 @@ import com.coverstar.entity.*;
 import com.coverstar.repository.*;
 import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
+import com.coverstar.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,12 +100,14 @@ public class ProductServiceImpl implements ProductService {
                 i++;
             }
 
-            Product product;
+            Product product = new Product();
             if (id != null) {
                 product = productRepository.getProductById(id);
                 product.setUpdatedDate(new Date());
             } else {
-                product = new Product();
+                if (!FileUtils.isValidFileList(imageFiles)) {
+                    throw new Exception(Constants.NOT_IMAGE);
+                }
                 product.setCreatedDate(new Date());
                 product.setUpdatedDate(new Date());
                 product.setStatus(true);
@@ -249,7 +252,7 @@ public class ProductServiceImpl implements ProductService {
             BigDecimal maxPriceValue = searchProductDto.getMaxPrice() != null ? searchProductDto.getMaxPrice() : BigDecimal.valueOf(Double.MAX_VALUE);
             Long productTypeId = searchProductDto.getProductTypeId() != null ? searchProductDto.getProductTypeId() : 0L;
             Long brandId = searchProductDto.getBrandId() != null ? searchProductDto.getBrandId() : 0L;
-            if (searchProductDto.getBrandId() != null){
+            if (searchProductDto.getBrandId() != null) {
                 Brand brand = brandService.getBrandById(searchProductDto.getBrandId());
                 long numberOfVisits;
                 if (brand.getNumberOfVisits() == null) {

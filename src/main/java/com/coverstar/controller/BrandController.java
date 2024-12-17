@@ -10,12 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/brands")
@@ -25,14 +23,26 @@ public class BrandController {
     private BrandService brandService;
 
     @PostMapping("/admin/createOrUpdate")
-    public ResponseEntity<?> createOrUpdate(@RequestBody @Valid BrandOrCategoryDto brandOrCategoryDto) {
+    public ResponseEntity<?> createOrUpdate(@RequestParam(value = "id", required = false) Long id,
+                                            @RequestParam("productTypeId") Long productTypeId,
+                                            @RequestParam("name") String name,
+                                            @RequestParam("status") Boolean status,
+                                            @RequestParam("description") String description,
+                                            @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
         try {
-            Brand brand = brandService.createOrUpdate(brandOrCategoryDto);
+            Brand brand = brandService.createOrUpdate(
+                    new BrandOrCategoryDto(id, productTypeId, name, status, description, imageFiles));
             return ResponseEntity.ok(brand);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.NOT_IMAGE)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.NOT_IMAGE);
+            }
+
             if (e.getMessage().equals(Constants.BRAND_NOT_FOUND)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.BRAND_NOT_FOUND);
             }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
@@ -66,7 +76,7 @@ public class BrandController {
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {
             brandService.delete(id);
-            return ResponseEntity.ok(Constants.SUCCESS);
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }

@@ -2,6 +2,7 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.component.mail.Mail;
 import com.coverstar.component.mail.MailService;
+import com.coverstar.constant.Constants;
 import com.coverstar.utils.RandomUtil;
 import com.coverstar.dao.account.AccountDao;
 import com.coverstar.dao.verify_account.VerifyAccountDao;
@@ -58,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             Account account = getEmailOrUser(loginDto.getUsernameOrEmail());
             if (account.isLocked()) {
-                throw new BadCredentialsException("Account is locked");
+                throw new BadCredentialsException(Constants.LOCK_ACCOUNT);
             }
             if (account.getCountLock() < 5) {
                 account.setCountLock(0);
@@ -115,11 +116,11 @@ public class AccountServiceImpl implements AccountService {
         String lastName = accountDto.getLastName();
 
         if (accountDao.findByEmail(email).isPresent()) {
-            throw new Exception("Email already exists");
+            throw new Exception(Constants.DUPLICATE_EMAIL);
         }
 
         if (accountDao.findByUsername(username).isPresent()) {
-            throw new Exception("Username already exists");
+            throw new Exception(Constants.DUPLICATE_USERNAME);
         }
 
         Account account = new Account();

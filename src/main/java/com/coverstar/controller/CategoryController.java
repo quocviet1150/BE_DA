@@ -41,7 +41,7 @@ public class CategoryController {
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         try {
             categoryService.delete(id);
-            return ResponseEntity.ok(Constants.SUCCESS);
+            return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             if (e.getMessage().equals(Constants.CATEGORY_NOT_FOUND)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.CATEGORY_NOT_FOUND);
