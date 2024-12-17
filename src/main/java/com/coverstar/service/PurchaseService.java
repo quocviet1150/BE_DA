@@ -6,7 +6,7 @@ import com.coverstar.entity.Purchase;
 import java.util.List;
 
 public interface PurchaseService {
-    List<Purchase> createPurchase(List<PurchaseDto> purchases);
+    List<Purchase> createPurchase(List<PurchaseDto> purchases) throws Exception;
 
     Purchase updateFirstWave(Long id, Long addressId) throws Exception;
 

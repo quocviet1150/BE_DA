@@ -10,6 +10,7 @@ import com.coverstar.service.ProductService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -50,9 +51,11 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ShippingMethodRepository shippingMethodRepository;
 
+    @Lazy
     @Autowired
     private BrandService brandService;
 
+    @Lazy
     @Autowired
     private BrandRepository brandRepository;
 

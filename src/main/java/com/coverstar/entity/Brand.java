@@ -41,4 +41,7 @@ public class Brand {
 
     @Column(name = "number_of_visits")
     private Long numberOfVisits;
+
+    @Column(name = "quantity_sold")
+    private Long quantitySold;
 }

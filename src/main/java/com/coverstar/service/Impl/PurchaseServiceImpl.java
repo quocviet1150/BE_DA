@@ -2,11 +2,14 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.PurchaseDto;
+import com.coverstar.entity.Brand;
 import com.coverstar.entity.Product;
 import com.coverstar.entity.Purchase;
+import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.repository.PurchaseRepository;
 import com.coverstar.service.AddressService;
+import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
 import com.coverstar.service.PurchaseService;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +36,14 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private BrandService brandService;
+
+    @Autowired
+    private BrandRepository brandRepository;
+
     @Override
-    public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) {
+    public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
         List<Purchase> purchases = new ArrayList<>();
         try {
             for (PurchaseDto purchaseDto : purchaseDtos) {
@@ -45,6 +54,14 @@ public class PurchaseServiceImpl implements PurchaseService {
                 }
                 product.setQuantitySold(product.getQuantitySold() + purchaseDto.getQuantity());
                 product = productRepository.save(product);
+
+                Brand brand = brandService.getBrandById(product.getBrandId());
+                if (brand.getQuantitySold() == null) {
+                    brand.setQuantitySold(0L);
+                }
+                brand.setQuantitySold(brand.getQuantitySold() + purchaseDto.getQuantity());
+                brandRepository.save(brand);
+
                 purchase.setUserId(purchaseDto.getUserId());
                 purchase.setProduct(product);
                 purchase.setQuantity(purchaseDto.getQuantity());
