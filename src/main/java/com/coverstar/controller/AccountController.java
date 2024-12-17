@@ -79,13 +79,13 @@ public class AccountController {
 
             boolean isPasswordCorrect = accountService.checkPassword(changePasswordDto.getUsernameOrEmail(), changePasswordDto.getOldPassword());
             if (!isPasswordCorrect) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.INVALID_OLD_PASSWORD);
             }
 
             accountService.changePassword(changePasswordDto.getUsernameOrEmail(), changePasswordDto.getNewPassword());
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error changing password");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_PASSWORD);
         }
     }
 
@@ -99,7 +99,7 @@ public class AccountController {
             accountService.forgotPassword(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_EMAIL);
         }
     }
 
@@ -118,19 +118,19 @@ public class AccountController {
             accountService.unlockAccount(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error unlocking account");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_UNLOCK);
         }
     }
 
     @GetMapping("/account/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id) {
         try {
-            Account account = accountService.findById(id).orElseThrow(() -> new Exception("Account not found"));
+            Account account = accountService.findById(id).orElseThrow(() -> new Exception(Constants.ACCOUNT_NOTFOUND));
             ModelMapper modelMapper = new ModelMapper();
             AccountUpdateDto accountCreateDto = modelMapper.map(account, AccountUpdateDto.class);
             return ResponseEntity.ok(accountCreateDto);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
         }
     }
 
@@ -140,7 +140,7 @@ public class AccountController {
             List<Account> accounts = accountService.getAllAccount();
             return ResponseEntity.ok(accounts);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting all account");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_GET_ALL_ACCOUNT);
         }
     }
 
@@ -154,7 +154,7 @@ public class AccountController {
             accountService.lockAccount(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error locking account");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_LOCK);
         }
     }
 }

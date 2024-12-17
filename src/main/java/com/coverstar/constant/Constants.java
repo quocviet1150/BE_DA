@@ -25,7 +25,13 @@ public class Constants {
     public static final String LOCK_ACCOUNT = "Account is locked";
     public static final String INVALID_USERNAME = "Invalid username or password";
     public static final String INVALID_PASSWORD = "New password and confirm password do not match";
-
+    public static final String INVALID_OLD_PASSWORD = "Old password is incorrect";
+    public static final String ERROR_PASSWORD = "Error changing password";
+    public static final String ERROR_EMAIL = "Error changing email";
+    public static final String ERROR_UNLOCK = "Error unlocking account";
+    public static final String ERROR_LOCK = "Error locking account";
+    public static final String ACCOUNT_NOTFOUND = "Account not found";
+    public static final String ERROR_GET_ALL_ACCOUNT = "Error getting all account";
 
     public static final class Number {
         public static final String ONE = "1";

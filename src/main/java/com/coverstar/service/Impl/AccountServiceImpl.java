@@ -295,7 +295,7 @@ public class AccountServiceImpl implements AccountService {
                 emailOrUser.setUsername(usernameOrEmail);
             }
             Account account = accountDao.findByUsernameOrEmail(emailOrUser.getUsername(),
-                    emailOrUser.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+                    emailOrUser.getEmail()).orElseThrow(() -> new RuntimeException(Constants.ACCOUNT_NOTFOUND));
             return account;
         } catch (Exception e) {
             e.fillInStackTrace();
