@@ -36,4 +36,6 @@ public interface AccountService {
 	List<Account> getAllAccount();
 
 	void lockAccount(String usernameOrEmail);
+
+	List<Account> findByUsernameChat(String username);
 }
