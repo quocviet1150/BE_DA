@@ -329,4 +329,9 @@ public class AccountServiceImpl implements AccountService {
             e.fillInStackTrace();
         }
     }
+
+    @Override
+    public List<Account> findByUsernameChat(String username) {
+        return accountRepository.findByUsernameChat(username);
+    }
 }
