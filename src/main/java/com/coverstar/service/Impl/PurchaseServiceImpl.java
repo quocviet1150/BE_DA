@@ -2,19 +2,18 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.PurchaseDto;
-import com.coverstar.entity.Brand;
+import com.coverstar.entity.Category;
 import com.coverstar.entity.Product;
 import com.coverstar.entity.Purchase;
-import com.coverstar.repository.BrandRepository;
+import com.coverstar.repository.CategoryRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.repository.PurchaseRepository;
 import com.coverstar.service.AddressService;
-import com.coverstar.service.BrandService;
+import com.coverstar.service.CategoryService;
 import com.coverstar.service.ProductService;
 import com.coverstar.service.PurchaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.OpNE;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,10 +36,10 @@ public class PurchaseServiceImpl implements PurchaseService {
     private ProductRepository productRepository;
 
     @Autowired
-    private BrandService brandService;
+    private CategoryService categoryService;
 
     @Autowired
-    private BrandRepository brandRepository;
+    private CategoryRepository categoryRepository;
 
     @Override
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
@@ -55,12 +54,12 @@ public class PurchaseServiceImpl implements PurchaseService {
                 product.setQuantitySold(product.getQuantitySold() + purchaseDto.getQuantity());
                 product = productRepository.save(product);
 
-                Brand brand = brandService.getBrandById(product.getBrandId());
-                if (brand.getQuantitySold() == null) {
-                    brand.setQuantitySold(0L);
+                Category category = categoryService.getCategoryById(product.getCategoryId());
+                if (category.getQuantitySold() == null) {
+                    category.setQuantitySold(0L);
                 }
-                brand.setQuantitySold(brand.getQuantitySold() + purchaseDto.getQuantity());
-                brandRepository.save(brand);
+                category.setQuantitySold(category.getQuantitySold() + purchaseDto.getQuantity());
+                categoryRepository.save(category);
 
                 purchase.setUserId(purchaseDto.getUserId());
                 purchase.setProduct(product);

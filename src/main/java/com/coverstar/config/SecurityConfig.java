@@ -51,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/productTypes/admin/**",
                         "/products/admin/**",
-                        "/brands/admin/**",
                         "/categories/admin/**",
+                        "/brands/admin/**",
                         "/discounts/admin/**",
                         "/purchases/admin/**",
                         "/shipping-methods/admin/**"

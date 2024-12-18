@@ -30,9 +30,6 @@ public class Brand {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
-    @Column(name = "directory_path", nullable = false)
-    private String directoryPath;
-
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
 
@@ -41,10 +38,4 @@ public class Brand {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "number_of_visits")
-    private Long numberOfVisits;
-
-    @Column(name = "quantity_sold")
-    private Long quantitySold;
 }

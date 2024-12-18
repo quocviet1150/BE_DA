@@ -2,16 +2,16 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.ProductTypeSearchDto;
-import com.coverstar.entity.Brand;
 import com.coverstar.entity.Category;
+import com.coverstar.entity.Brand;
 import com.coverstar.entity.Product;
 import com.coverstar.entity.ProductType;
-import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.CategoryRepository;
+import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.repository.ProductTypeRepository;
-import com.coverstar.service.BrandService;
 import com.coverstar.service.CategoryService;
+import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
 import com.coverstar.service.ProductTypeService;
 import com.coverstar.utils.ShopUtil;
@@ -37,16 +37,16 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     private ProductService productService;
 
     @Autowired
-    private BrandRepository brandRepository;
-
-    @Autowired
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private BrandService brandService;
+    private BrandRepository brandRepository;
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private BrandService brandService;
 
     @Override
     public ProductType createOrUpdateProductType(Long id, String name, MultipartFile imageFile, String description) throws Exception {
@@ -117,17 +117,17 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     public void deleteProductType(Long id) throws Exception {
         try {
 
-            List<Brand> brands = brandRepository.findAllByProductTypeId(id);
-            if (!CollectionUtils.isEmpty(brands)) {
-                for (Brand brand : brands) {
-                    brandService.delete(brand.getId());
-                }
-            }
-
             List<Category> categories = categoryRepository.findAllByProductTypeId(id);
             if (!CollectionUtils.isEmpty(categories)) {
                 for (Category category : categories) {
                     categoryService.delete(category.getId());
+                }
+            }
+
+            List<Brand> brands = brandRepository.findAllByProductTypeId(id);
+            if (!CollectionUtils.isEmpty(brands)) {
+                for (Brand brand : brands) {
+                    brandService.delete(brand.getId());
                 }
             }
 
