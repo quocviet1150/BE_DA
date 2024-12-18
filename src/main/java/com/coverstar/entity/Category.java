@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "CATEGORYS")
+@Table(name = "CATEGORIES")
 @Getter
 @Setter
 public class Category {
@@ -30,6 +30,9 @@ public class Category {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
+    @Column(name = "directory_path", nullable = false)
+    private String directoryPath;
+
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
 
@@ -38,4 +41,10 @@ public class Category {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "number_of_visits")
+    private Long numberOfVisits;
+
+    @Column(name = "quantity_sold")
+    private Long quantitySold;
 }

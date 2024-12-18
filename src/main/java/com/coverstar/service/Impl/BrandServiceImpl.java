@@ -8,16 +8,11 @@ import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
-import com.coverstar.utils.ShopUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -27,45 +22,27 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandRepository brandRepository;
 
-    @Lazy
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Lazy
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     @Override
-    public Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) throws Exception {
+    public Brand createOrUpdate(BrandOrCategoryDto categoryDto) {
         try {
             Brand brand = new Brand();
-            if (brandOrCategoryDto.getId() != null) {
-                brand = brandRepository.getById(brandOrCategoryDto.getId());
+            if (categoryDto.getId() != null) {
+                brand = brandRepository.getById(categoryDto.getId());
                 brand.setUpdatedDate(new Date());
             } else {
-                if (brandOrCategoryDto.getImageFiles() == null || brandOrCategoryDto.getImageFiles().isEmpty()) {
-                    throw new Exception(Constants.NOT_IMAGE);
-                }
                 brand.setCreatedDate(new Date());
                 brand.setUpdatedDate(new Date());
-                brand.setProductTypeId(brandOrCategoryDto.getProductTypeId());
+                brand.setProductTypeId(categoryDto.getProductTypeId());
             }
-            brand.setName(brandOrCategoryDto.getName());
-            brand.setDescription(brandOrCategoryDto.getDescription());
-            brand.setStatus(brandOrCategoryDto.getStatus());
-            brand = brandRepository.save(brand);
-
-            if (brandOrCategoryDto.getImageFiles() != null && !brandOrCategoryDto.getImageFiles().isEmpty()) {
-                if (brand.getDirectoryPath() != null) {
-                    File oldFile = new File(brand.getDirectoryPath());
-                    if (oldFile.exists()) {
-                        oldFile.delete();
-                    }
-                }
-                String fullPath = ShopUtil.handleFileUpload(brandOrCategoryDto.getImageFiles(), "brand", brand.getId());
-                brand.setDirectoryPath(fullPath);
-            }
-
+            brand.setName(categoryDto.getName());
+            brand.setDescription(categoryDto.getDescription());
+            brand.setStatus(categoryDto.getStatus());
             return brandRepository.save(brand);
         } catch (Exception e) {
             e.fillInStackTrace();
@@ -83,9 +60,10 @@ public class BrandServiceImpl implements BrandService {
                     productService.deleteProductById(product.getId());
                 }
             }
+
             Brand brand = brandRepository.getById(id);
             if (brand == null) {
-                throw new Exception(Constants.BRAND_NOT_FOUND);
+                throw new Exception(Constants.CATEGORY_NOT_FOUND);
             }
             brandRepository.delete(brand);
         } catch (Exception e) {
@@ -95,13 +73,12 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public List<Brand> getAllBrand(Long productTypeId, String name, Boolean status, Integer page, Integer size) {
+    public List<Brand> getAllBrand(String name, Boolean status, Long productTypeId) {
         try {
             String nameValue = name != null ? name : StringUtils.EMPTY;
-            Long productTypeIdValue = productTypeId != null ? productTypeId : null;
             Boolean statusValue = status != null ? status : null;
-            Pageable pageable = PageRequest.of(page, size);
-            return brandRepository.findAllByConditions(productTypeIdValue, nameValue, statusValue, pageable);
+            Long productTypeIdValue = productTypeId != null ? productTypeId : null;
+            return brandRepository.findAllByConditions(nameValue, statusValue, productTypeIdValue);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
@@ -113,7 +90,7 @@ public class BrandServiceImpl implements BrandService {
         try {
             Brand brand = brandRepository.getById(id);
             if (brand == null) {
-                throw new Exception(Constants.BRAND_NOT_FOUND);
+                throw new Exception(Constants.CATEGORY_NOT_FOUND);
             }
             return brand;
         } catch (Exception e) {

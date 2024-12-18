@@ -6,11 +6,11 @@ import com.coverstar.entity.Brand;
 import java.util.List;
 
 public interface BrandService {
-    Brand createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) throws Exception;
+    Brand createOrUpdate(BrandOrCategoryDto categoryDto);
 
     void delete(Long id) throws Exception;
 
-    List<Brand> getAllBrand(Long productTypeId, String name, Boolean status, Integer page, Integer size);
+    List<Brand> getAllBrand(String name, Boolean status, Long productTypeId);
 
     Brand getBrandById(Long id) throws Exception;
 }

@@ -5,7 +5,7 @@ import com.coverstar.dto.ProductDetailDTO;
 import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.*;
 import com.coverstar.repository.*;
-import com.coverstar.service.BrandService;
+import com.coverstar.service.CategoryService;
 import com.coverstar.service.ProductService;
 import com.coverstar.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,11 +54,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Lazy
     @Autowired
-    private BrandService brandService;
+    private CategoryService categoryService;
 
     @Lazy
     @Autowired
-    private BrandRepository brandRepository;
+    private CategoryRepository categoryRepository;
 
     @Override
     public Product saveOrUpdateProduct(Long id,
@@ -252,16 +252,16 @@ public class ProductServiceImpl implements ProductService {
             BigDecimal maxPriceValue = searchProductDto.getMaxPrice() != null ? searchProductDto.getMaxPrice() : BigDecimal.valueOf(Double.MAX_VALUE);
             Long productTypeId = searchProductDto.getProductTypeId() != null ? searchProductDto.getProductTypeId() : 0L;
             Long brandId = searchProductDto.getBrandId() != null ? searchProductDto.getBrandId() : 0L;
-            if (searchProductDto.getBrandId() != null) {
-                Brand brand = brandService.getBrandById(searchProductDto.getBrandId());
+            if (searchProductDto.getCategoryId() != null) {
+                Category category = categoryService.getCategoryById(searchProductDto.getCategoryId());
                 long numberOfVisits;
-                if (brand.getNumberOfVisits() == null) {
+                if (category.getNumberOfVisits() == null) {
                     numberOfVisits = 1L;
                 } else {
-                    numberOfVisits = brand.getNumberOfVisits() + 1;
+                    numberOfVisits = category.getNumberOfVisits() + 1;
                 }
-                brand.setNumberOfVisits(numberOfVisits);
-                brandRepository.save(brand);
+                category.setNumberOfVisits(numberOfVisits);
+                categoryRepository.save(category);
             }
             Long categoryId = searchProductDto.getCategoryId() != null ? searchProductDto.getCategoryId() : 0L;
             List<Long> shippingMethodIds = searchProductDto.getShippingMethodIds().stream()
