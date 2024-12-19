@@ -26,9 +26,6 @@ public class UserVisits implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
-
     @Column(name = "visit_date")
     private Date visitDate;
 

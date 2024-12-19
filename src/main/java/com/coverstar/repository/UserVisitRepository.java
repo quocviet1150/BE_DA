@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface UserVisitRepository extends JpaRepository<UserVisits, Long> {
 
-    @Query("SELECT u FROM UserVisits u WHERE u.userId = :userId")
-    List<UserVisits> findByUserId(Long userId);
+    @Query("SELECT u FROM UserVisits u WHERE DATE(u.visitDate) = DATE(:date)")
+    UserVisits findByUserId(Date date);
 
     @Query("SELECT uv.visitDate, SUM(uv.visitCount) " +
             "FROM UserVisits uv " +

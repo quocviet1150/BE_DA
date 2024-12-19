@@ -72,24 +72,15 @@ public class AccountServiceImpl implements AccountService {
                 accountDao.update(account);
             }
 
-            List<UserVisits> userVisitsList = userVisitRepository.findByUserId(account.getId());
-            if (userVisitsList == null) {
-                userVisitsList = new ArrayList<>();
-            }
-            Date today = getStartOfDay(new Date());
-            Optional<UserVisits> todayVisit = userVisitsList.stream()
-                    .filter(visit -> isSameDay(today, visit.getVisitDate()))
-                    .findFirst();
-            if (todayVisit.isPresent()) {
-                UserVisits userVisits = todayVisit.get();
-                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+            UserVisits userVisits = userVisitRepository.findByUserId(new Date());
+            if (userVisits == null) {
+                userVisits = new UserVisits();
+                userVisits.setVisitDate(new Date());
+                userVisits.setVisitCount(1L);
                 userVisitRepository.save(userVisits);
             } else {
-                UserVisits newUserVisit = new UserVisits();
-                newUserVisit.setUserId(account.getId());
-                newUserVisit.setVisitDate(today);
-                newUserVisit.setVisitCount(1L);
-                userVisitRepository.save(newUserVisit);
+                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+                userVisitRepository.save(userVisits);
             }
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
