@@ -80,38 +80,44 @@ public class DashboardServiceImpl implements DashboardService {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -6);
             Date sevenDaysAgo = calendar.getTime();
-
-            List<Object[]> result = userVisitsRepository.findVisitCountsGroupedByDay(sevenDaysAgo);
-
+            Date today = new Date();
+            calendar.add(Calendar.DAY_OF_YEAR, -7);
+            Date fourteenDaysAgo = calendar.getTime();
+            List<Object[]> recentResults = userVisitsRepository.findVisitCountsByDateRange(sevenDaysAgo, today);
+            List<Object[]> pastResults = userVisitsRepository.findVisitCountsByDateRange(fourteenDaysAgo, sevenDaysAgo);
             List<Long> dataCount = new ArrayList<>();
             List<String> date = new ArrayList<>();
-
             List<Date> allDates = new ArrayList<>();
+            calendar.setTime(today);
             for (int i = 0; i < 7; i++) {
-                calendar.add(Calendar.DAY_OF_YEAR, 1);
                 allDates.add(calendar.getTime());
+                calendar.add(Calendar.DAY_OF_YEAR, -1);
             }
-
             for (int i = 0; i < 7; i++) {
                 dataCount.add(0L);
-                date.add(dateFormat.format(allDates.get(i)));
+                date.add(dateFormat.format(allDates.get(6 - i)));
             }
-
-            for (Object[] row : result) {
+            for (Object[] row : recentResults) {
                 Date visitDate = (Date) row[0];
                 Long visitCount = (Long) row[1];
 
                 for (int i = 0; i < allDates.size(); i++) {
                     if (isSameDay(allDates.get(i), visitDate)) {
-                        dataCount.set(i, visitCount);
+                        dataCount.set(6 - i, visitCount);
                         break;
                     }
                 }
             }
-
+            long totalRecentVisits = dataCount.stream().mapToLong(Long::longValue).sum();
+            long totalPastVisits = 0;
+            for (Object[] row : pastResults) {
+                totalPastVisits += (Long) row[1];
+            }
             List<Object> response = new ArrayList<>();
             response.add(dataCount);
             response.add(date);
+            response.add(totalRecentVisits);
+            response.add(totalPastVisits);
             return response;
         } catch (Exception e) {
             e.printStackTrace();

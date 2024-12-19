@@ -17,8 +17,8 @@ public interface UserVisitRepository extends JpaRepository<UserVisits, Long> {
 
     @Query("SELECT uv.visitDate, SUM(uv.visitCount) " +
             "FROM UserVisits uv " +
-            "WHERE uv.visitDate >= :startDate " +
+            "WHERE uv.visitDate BETWEEN :startDate AND :endDate " +
             "GROUP BY uv.visitDate " +
-            "ORDER BY uv.visitDate ASC")
-    List<Object[]> findVisitCountsGroupedByDay(@Param("startDate") Date startDate);
+            "ORDER BY uv.visitDate DESC ")
+    List<Object[]> findVisitCountsByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
