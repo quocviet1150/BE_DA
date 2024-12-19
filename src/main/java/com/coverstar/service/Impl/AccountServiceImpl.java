@@ -3,6 +3,8 @@ package com.coverstar.service.Impl;
 import com.coverstar.component.mail.Mail;
 import com.coverstar.component.mail.MailService;
 import com.coverstar.constant.Constants;
+import com.coverstar.entity.UserVisits;
+import com.coverstar.repository.UserVisitRepository;
 import com.coverstar.utils.RandomUtil;
 import com.coverstar.dao.account.AccountDao;
 import com.coverstar.dao.verify_account.VerifyAccountDao;
@@ -27,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -54,6 +57,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private UserVisitRepository userVisitRepository;
+
     @Override
     public Map<String, String> authenticateUser(LoginDto loginDto) {
         try {
@@ -65,6 +71,27 @@ public class AccountServiceImpl implements AccountService {
                 account.setCountLock(0);
                 accountDao.update(account);
             }
+
+            List<UserVisits> userVisitsList = userVisitRepository.findByUserId(account.getId());
+            if (userVisitsList == null) {
+                userVisitsList = new ArrayList<>();
+            }
+            Date today = getStartOfDay(new Date());
+            Optional<UserVisits> todayVisit = userVisitsList.stream()
+                    .filter(visit -> isSameDay(today, visit.getVisitDate()))
+                    .findFirst();
+            if (todayVisit.isPresent()) {
+                UserVisits userVisits = todayVisit.get();
+                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+                userVisitRepository.save(userVisits);
+            } else {
+                UserVisits newUserVisit = new UserVisits();
+                newUserVisit.setUserId(account.getId());
+                newUserVisit.setVisitDate(today);
+                newUserVisit.setVisitCount(1L);
+                userVisitRepository.save(newUserVisit);
+            }
+
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginDto.getUsernameOrEmail(), loginDto.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -85,6 +112,7 @@ public class AccountServiceImpl implements AccountService {
             response.put("role", role);
             response.put("firstName", userDetails.getFirstName());
             response.put("lastName", userDetails.getLastName());
+
             return response;
         } catch (Exception e) {
             try {
@@ -333,5 +361,24 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> findByUsernameChat(String username) {
         return accountRepository.findByUsernameChat(username);
+    }
+
+    private Date getStartOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    private boolean isSameDay(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 }
