@@ -32,6 +32,10 @@ public class PurchaseController {
             return ResponseEntity.ok(purchaseList);
         } catch (Exception e) {
 
+            if (e.getMessage().equals(Constants.DISCOUNT_EXPIRED)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.DISCOUNT_EXPIRED);
+            }
+
             if (e.getMessage().equals(Constants.INSUFFICIENT_PRODUCT_QUANTITY)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.INSUFFICIENT_PRODUCT_QUANTITY);
             }

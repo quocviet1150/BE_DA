@@ -27,7 +27,7 @@ public class ProductType {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
-    @Column(name = "directory_path", nullable = false)
+    @Column(name = "directory_path")
     private String directoryPath;
 
     @Column(name = "created_date", nullable = false)

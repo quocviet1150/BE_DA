@@ -63,11 +63,17 @@ public class DiscountController {
     }
 
     @GetMapping("/getDiscount/{id}")
-    public ResponseEntity<?> getDiscount(@PathVariable Long id) {
+    public ResponseEntity<?> getDiscount(@PathVariable Long id,
+                                         @RequestParam("type") Integer type) {
         try {
-            Discount discount = discountService.getDiscount(id);
+            Discount discount = discountService.getDiscount(id, type);
             return ResponseEntity.ok(discount);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.DISCOUNT_EXPIRED)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.DISCOUNT_EXPIRED);
+            }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }

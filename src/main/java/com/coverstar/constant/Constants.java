@@ -33,6 +33,7 @@ public class Constants {
     public static final String ERROR_LOCK = "Error locking account";
     public static final String ACCOUNT_NOTFOUND = "Account not found";
     public static final String ERROR_GET_ALL_ACCOUNT = "Error getting all account";
+    public static final String DISCOUNT_EXPIRED = "Discount code has expired";
 
     public static final class Number {
         public static final String ONE = "1";

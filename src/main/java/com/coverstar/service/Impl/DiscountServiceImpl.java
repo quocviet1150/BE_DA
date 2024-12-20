@@ -109,9 +109,15 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     @Override
-    public Discount getDiscount(Long id) {
+    public Discount getDiscount(Long id, Integer type) throws Exception {
         try {
-            return discountRepository.findById(id).orElse(null);
+            Discount discount = discountRepository.findById(id).orElse(null);
+            if (type == 1 && discount != null && discount.getExpiredDate().after(new Date())) {
+                discount.setStatus(false);
+                discountRepository.save(discount);
+                throw new Exception(Constants.DISCOUNT_EXPIRED);
+            }
+            return discount;
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

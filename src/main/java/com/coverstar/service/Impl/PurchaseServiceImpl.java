@@ -4,10 +4,7 @@ import com.coverstar.constant.Constants;
 import com.coverstar.dto.PurchaseDto;
 import com.coverstar.entity.*;
 import com.coverstar.repository.*;
-import com.coverstar.service.AddressService;
-import com.coverstar.service.CategoryService;
-import com.coverstar.service.ProductService;
-import com.coverstar.service.PurchaseService;
+import com.coverstar.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,16 +40,24 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+    @Autowired
+    private DiscountService discountService;
+
     @Override
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
         List<Purchase> purchases = new ArrayList<>();
         try {
             for (PurchaseDto purchaseDto : purchaseDtos) {
                 Purchase purchase = new Purchase();
+
+                // check if discount is valid
+                discountService.getDiscount(purchaseDto.getDiscountId(), 1);
+
                 Product product = productService.getProductById(purchaseDto.getProductId());
                 if (product.getQuantitySold() == null) {
                     product.setQuantitySold(0L);
                 }
+
                 product.setQuantitySold(product.getQuantitySold() + purchaseDto.getQuantity());
                 product = productRepository.save(product);
 

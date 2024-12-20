@@ -47,7 +47,7 @@ public class ProductDetail implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
 
-    @Column(name = "directory_path", nullable = false)
+    @Column(name = "directory_path")
     private String directoryPath;
 
     @Column(name = "type")
