@@ -2,12 +2,8 @@ package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.PurchaseDto;
-import com.coverstar.entity.Category;
-import com.coverstar.entity.Product;
-import com.coverstar.entity.Purchase;
-import com.coverstar.repository.CategoryRepository;
-import com.coverstar.repository.ProductRepository;
-import com.coverstar.repository.PurchaseRepository;
+import com.coverstar.entity.*;
+import com.coverstar.repository.*;
 import com.coverstar.service.AddressService;
 import com.coverstar.service.CategoryService;
 import com.coverstar.service.ProductService;
@@ -41,6 +37,12 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private UserVisitRepository userVisitRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
+
     @Override
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
         List<Purchase> purchases = new ArrayList<>();
@@ -54,6 +56,13 @@ public class PurchaseServiceImpl implements PurchaseService {
                 product.setQuantitySold(product.getQuantitySold() + purchaseDto.getQuantity());
                 product = productRepository.save(product);
 
+                ProductDetail productDetail = productDetailRepository.getById(purchaseDto.getProductDetailId());
+                if (productDetail.getQuantity() <  purchaseDto.getQuantity()) {
+                    throw new Exception(Constants.INSUFFICIENT_PRODUCT_QUANTITY);
+                }
+                productDetail.setQuantity(productDetail.getQuantity() - purchaseDto.getQuantity());
+                productDetail = productDetailRepository.save(productDetail);
+
                 Category category = categoryService.getCategoryById(product.getCategoryId());
                 if (category.getQuantitySold() == null) {
                     category.setQuantitySold(0L);
@@ -61,8 +70,21 @@ public class PurchaseServiceImpl implements PurchaseService {
                 category.setQuantitySold(category.getQuantitySold() + purchaseDto.getQuantity());
                 categoryRepository.save(category);
 
+                UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), 2);
+                if (userVisits == null) {
+                    userVisits = new UserVisits();
+                    userVisits.setVisitDate(new Date());
+                    userVisits.setVisitCount(1L);
+                    userVisits.setType(2);
+                    userVisitRepository.save(userVisits);
+                } else {
+                    userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+                    userVisitRepository.save(userVisits);
+                }
+
                 purchase.setUserId(purchaseDto.getUserId());
                 purchase.setProduct(product);
+                purchase.setProductDetail(productDetail);
                 purchase.setQuantity(purchaseDto.getQuantity());
                 purchase.setPaymentMethod(purchaseDto.getPaymentMethod());
                 purchase.setAddress(addressService.getAddressById(purchaseDto.getAddressId()));
@@ -109,6 +131,22 @@ public class PurchaseServiceImpl implements PurchaseService {
             if (purchase == null) {
                 throw new Exception(Constants.PURCHASE_NOT_FOUND);
             }
+            if (status == 5) {
+                Product product = productService.getProductById(purchase.getProduct().getId());
+                if (product.getQuantitySold() < purchase.getQuantity()) {
+                    throw new Exception(Constants.ERROR);
+                }
+                product.setQuantitySold(product.getQuantitySold() - purchase.getQuantity());
+                productRepository.save(product);
+
+                ProductDetail productDetail = productDetailRepository.getById(purchase.getProductDetail().getId());
+                if (productDetail.getQuantity() <  productDetail.getQuantity()) {
+                    throw new Exception(Constants.INSUFFICIENT_PRODUCT_QUANTITY);
+                }
+                productDetail.setQuantity(productDetail.getQuantity() + purchase.getQuantity());
+                productDetailRepository.save(productDetail);
+            }
+
             purchase.setStatus(status);
             purchase.setUpdatedDate(new Date());
             return purchaseRepository.save(purchase);

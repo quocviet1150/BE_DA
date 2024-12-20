@@ -35,6 +35,10 @@ public class Purchase implements Serializable {
     private Product product;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_detail_id", referencedColumnName = "id")
+    private ProductDetail productDetail;
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 

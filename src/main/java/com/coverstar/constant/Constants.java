@@ -5,6 +5,7 @@ public class Constants {
     public static final String VALID_VERIFICATION = "Valid verification code. Account has been activated.";
     public static final String VERIFYING_ERROR = "An error occurred while verifying the code.";
     public static final String PURCHASE_NOT_FOUND = "Purchase not found";
+    public static final String INSUFFICIENT_PRODUCT_QUANTITY = "Insufficient product quantity";
     public static final String LANGUAGE_VI = "vi";
     public static final String LANGUAGE_EN = "en";
     public static final String ASC = "ASC";

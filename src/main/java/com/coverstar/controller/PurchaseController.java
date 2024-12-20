@@ -31,6 +31,11 @@ public class PurchaseController {
             List<Purchase> purchaseList = purchaseService.createPurchase(purchases);
             return ResponseEntity.ok(purchaseList);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.INSUFFICIENT_PRODUCT_QUANTITY)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.INSUFFICIENT_PRODUCT_QUANTITY);
+            }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }

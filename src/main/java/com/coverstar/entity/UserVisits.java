@@ -31,4 +31,7 @@ public class UserVisits implements Serializable {
 
     @Column(name = "visit_count")
     private Long visitCount;
+
+    @Column(name = "type")
+    private Integer type;
 }

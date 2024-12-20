@@ -75,7 +75,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<Object> getChartUsers() {
+    public List<Object> getChartUsers(Integer type) {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -6);
@@ -83,8 +83,8 @@ public class DashboardServiceImpl implements DashboardService {
             Date today = new Date();
             calendar.add(Calendar.DAY_OF_YEAR, -7);
             Date fourteenDaysAgo = calendar.getTime();
-            List<Object[]> recentResults = userVisitsRepository.findVisitCountsByDateRange(sevenDaysAgo, today);
-            List<Object[]> pastResults = userVisitsRepository.findVisitCountsByDateRange(fourteenDaysAgo, sevenDaysAgo);
+            List<Object[]> recentResults = userVisitsRepository.findVisitCountsByDateRange(sevenDaysAgo, today, type);
+            List<Object[]> pastResults = userVisitsRepository.findVisitCountsByDateRange(fourteenDaysAgo, sevenDaysAgo, type);
             List<Long> dataCount = new ArrayList<>();
             List<String> date = new ArrayList<>();
             List<Date> allDates = new ArrayList<>();

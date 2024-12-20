@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PurchaseDto implements Serializable {
     private Long productId;
+    private Long productDetailId;
     private Long addressId;
     private Long userId;
     private String description;

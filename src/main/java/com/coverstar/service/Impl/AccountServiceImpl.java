@@ -72,11 +72,12 @@ public class AccountServiceImpl implements AccountService {
                 accountDao.update(account);
             }
 
-            UserVisits userVisits = userVisitRepository.findByUserId(new Date());
+            UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), 1);
             if (userVisits == null) {
                 userVisits = new UserVisits();
                 userVisits.setVisitDate(new Date());
                 userVisits.setVisitCount(1L);
+                userVisits.setType(1);
                 userVisitRepository.save(userVisits);
             } else {
                 userVisits.setVisitCount(userVisits.getVisitCount() + 1);
