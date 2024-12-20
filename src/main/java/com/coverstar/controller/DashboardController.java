@@ -33,10 +33,10 @@ public class DashboardController {
         }
     }
 
-    @GetMapping("/getChartUsers")
-    public ResponseEntity<?> getChartUsers(@RequestParam Integer type) {
+    @GetMapping("/getChartWidgets")
+    public ResponseEntity<?> getChartWidgets(@RequestParam Integer type) {
         try {
-            List<Object> statistics = dashboardService.getChartUsers(type);
+            List<Object> statistics = dashboardService.getChartWidgets(type);
             return ResponseEntity.ok(statistics);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);

@@ -75,7 +75,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<Object> getChartUsers(Integer type) {
+    public List<Object> getChartWidgets(Integer type) {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -6);

@@ -6,5 +6,5 @@ import java.util.Map;
 public interface DashboardService {
     Map<String, Object> getChartPurchase(String type, Integer year, Integer month);
 
-    List<Object> getChartUsers(Integer type);
+    List<Object> getChartWidgets(Integer type);
 }
