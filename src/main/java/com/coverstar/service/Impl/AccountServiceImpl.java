@@ -71,19 +71,6 @@ public class AccountServiceImpl implements AccountService {
                 account.setCountLock(0);
                 accountDao.update(account);
             }
-
-            UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), 1);
-            if (userVisits == null) {
-                userVisits = new UserVisits();
-                userVisits.setVisitDate(new Date());
-                userVisits.setVisitCount(1L);
-                userVisits.setType(1);
-                userVisitRepository.save(userVisits);
-            } else {
-                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
-                userVisitRepository.save(userVisits);
-            }
-
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginDto.getUsernameOrEmail(), loginDto.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -197,14 +184,29 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void verifyCode(VerifyCodeDto verifyCodeDto) {
-
-        String token = verifyCodeDto.getToken();
-        VerifyAccount verifyAccount = verifyAccountDao.findByToken(token).get();
-        Account account = verifyAccount.getAccount();
-        account.setActive(true);
-        account.setCountLock(0);
-        account.setLocked(false);
-        accountDao.update(account);
+        try {
+            UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), 1);
+            if (userVisits == null) {
+                userVisits = new UserVisits();
+                userVisits.setVisitDate(new Date());
+                userVisits.setVisitCount(1L);
+                userVisits.setType(1);
+                userVisitRepository.save(userVisits);
+            } else {
+                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+                userVisitRepository.save(userVisits);
+            }
+            String token = verifyCodeDto.getToken();
+            VerifyAccount verifyAccount = verifyAccountDao.findByToken(token).get();
+            Account account = verifyAccount.getAccount();
+            account.setActive(true);
+            account.setCountLock(0);
+            account.setLocked(false);
+            accountDao.update(account);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
     }
 
     public boolean checkPassword(String userNameOrEmail, String oldPassword) {

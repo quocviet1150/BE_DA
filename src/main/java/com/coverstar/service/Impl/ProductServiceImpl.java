@@ -60,6 +60,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private UserVisitRepository userVisitRepository;
+
     @Override
     public Product saveOrUpdateProduct(Long id,
                                        String productName,
@@ -247,6 +250,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findByNameAndPriceRange(SearchProductDto searchProductDto) throws Exception {
         try {
+            UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), 3);
+            if (userVisits == null) {
+                userVisits = new UserVisits();
+                userVisits.setVisitDate(new Date());
+                userVisits.setVisitCount(1L);
+                userVisits.setType(3);
+                userVisitRepository.save(userVisits);
+            } else {
+                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+                userVisitRepository.save(userVisits);
+            }
             String nameValue = searchProductDto.getName() != null ? searchProductDto.getName() : StringUtils.EMPTY;
             BigDecimal minPriceValue = searchProductDto.getMinPrice() != null ? searchProductDto.getMinPrice() : BigDecimal.ZERO;
             BigDecimal maxPriceValue = searchProductDto.getMaxPrice() != null ? searchProductDto.getMaxPrice() : BigDecimal.valueOf(Double.MAX_VALUE);
