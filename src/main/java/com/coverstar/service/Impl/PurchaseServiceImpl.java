@@ -47,6 +47,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
         List<Purchase> purchases = new ArrayList<>();
         try {
+            getUserVisits(4);
             for (PurchaseDto purchaseDto : purchaseDtos) {
                 Purchase purchase = new Purchase();
 
@@ -62,7 +63,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 product = productRepository.save(product);
 
                 ProductDetail productDetail = productDetailRepository.getById(purchaseDto.getProductDetailId());
-                if (productDetail.getQuantity() <  purchaseDto.getQuantity()) {
+                if (productDetail.getQuantity() < purchaseDto.getQuantity()) {
                     throw new Exception(Constants.INSUFFICIENT_PRODUCT_QUANTITY);
                 }
                 productDetail.setQuantity(productDetail.getQuantity() - purchaseDto.getQuantity());
@@ -75,17 +76,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 category.setQuantitySold(category.getQuantitySold() + purchaseDto.getQuantity());
                 categoryRepository.save(category);
 
-                UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), 2);
-                if (userVisits == null) {
-                    userVisits = new UserVisits();
-                    userVisits.setVisitDate(new Date());
-                    userVisits.setVisitCount(1L);
-                    userVisits.setType(2);
-                    userVisitRepository.save(userVisits);
-                } else {
-                    userVisits.setVisitCount(userVisits.getVisitCount() + 1);
-                    userVisitRepository.save(userVisits);
-                }
+                getUserVisits(2);
 
                 purchase.setUserId(purchaseDto.getUserId());
                 purchase.setProduct(product);
@@ -145,7 +136,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 productRepository.save(product);
 
                 ProductDetail productDetail = productDetailRepository.getById(purchase.getProductDetail().getId());
-                if (productDetail.getQuantity() <  productDetail.getQuantity()) {
+                if (productDetail.getQuantity() < productDetail.getQuantity()) {
                     throw new Exception(Constants.INSUFFICIENT_PRODUCT_QUANTITY);
                 }
                 productDetail.setQuantity(productDetail.getQuantity() + purchase.getQuantity());
@@ -179,6 +170,25 @@ public class PurchaseServiceImpl implements PurchaseService {
             Integer statusValue = status != null ? status : 0;
             String paymentMethodValue = paymentMethod != null ? paymentMethod : StringUtils.EMPTY;
             return purchaseRepository.findAllByUserIdAndPaymentMethodContainingAndStatus(userIdValue, paymentMethodValue, statusValue);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    private void getUserVisits(Integer type) {
+        try {
+            UserVisits userVisits = userVisitRepository.findByVisitDate(new Date(), type);
+            if (userVisits == null) {
+                userVisits = new UserVisits();
+                userVisits.setVisitDate(new Date());
+                userVisits.setVisitCount(1L);
+                userVisits.setType(type);
+                userVisitRepository.save(userVisits);
+            } else {
+                userVisits.setVisitCount(userVisits.getVisitCount() + 1);
+                userVisitRepository.save(userVisits);
+            }
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
