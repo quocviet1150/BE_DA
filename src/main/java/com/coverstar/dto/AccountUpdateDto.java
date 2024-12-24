@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Getter
@@ -17,27 +14,13 @@ import java.util.Date;
 @NoArgsConstructor
 public class AccountUpdateDto {
 
-	@NotBlank(message = "Id is required")
-	private Long id;
-
-	@NotBlank(message = "Username is required")
-	@Length(min = 5, max = 50, message = "Username name must be between 5-100 characters")
-	private String username;
-
-	@Length(min = 5, max = 80, message = "email name must be between 10-100 characters")
-	@Email(message = "email is invalid")
-	private String email;
-
-	@NotBlank(message = "firstName is required")
-	@Length(min = 5, max = 255, message = "firstName name must be between 5-255 characters")
-	private String firstName;
-
-	@NotBlank(message = "lastName is required")
-	@Length(min = 5, max = 255, message = "lastName name must be between 5-255 characters")
-	private String lastName;
-
-	private Date dateOfBirth;
-	private Integer sex;
-	private String phoneNumber;
-	private MultipartFile imageFiles;
+    private Long id;
+    private String username;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private Date dateOfBirth;
+    private Integer sex;
+    private String phoneNumber;
+    private MultipartFile imageFiles;
 }

@@ -16,23 +16,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
-
-    @Autowired
-    private Validator validator;
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody AccountCreateDto accountCreateDto) {
@@ -200,13 +193,6 @@ public class AccountController {
         try {
             AccountUpdateDto accountUpdateDto = new AccountUpdateDto(id,
                     username, email, firstName, lastName, dateOfBirth, sex, phoneNumber, imageFiles);
-            Set<ConstraintViolation<AccountUpdateDto>> violations = validator.validate(accountUpdateDto);
-            if (!violations.isEmpty()) {
-                String errorMessage = violations.stream()
-                        .map(ConstraintViolation::getMessage)
-                        .collect(Collectors.joining(", "));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-            }
             AccountUpdateDto account = accountService.updateAccount(accountUpdateDto);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
