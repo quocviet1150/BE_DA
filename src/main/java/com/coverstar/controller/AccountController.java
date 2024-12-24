@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class AccountController {
@@ -28,11 +29,20 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@Valid @RequestBody AccountCreateDto accountCreateDto) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody AccountCreateDto accountCreateDto, BindingResult bindingResult) {
         try {
+
+            if (bindingResult.hasErrors()) {
+                List<String> errors = bindingResult.getFieldErrors().stream()
+                        .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                        .collect(Collectors.toList());
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            }
+
             Account account = accountService.createMember(accountCreateDto);
             accountCreateDto.setId(account.getId());
             return ResponseEntity.ok(accountCreateDto);
+
         } catch (Exception e) {
             if (e.getMessage().equals(Constants.DUPLICATE_EMAIL)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.DUPLICATE_EMAIL);
