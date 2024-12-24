@@ -14,16 +14,25 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private Validator validator;
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody AccountCreateDto accountCreateDto) {
@@ -66,6 +75,11 @@ public class AccountController {
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Constants.INVALID_USERNAME);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.EMAIL_INVALID)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.EMAIL_INVALID);
+            }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.VERIFYING_ERROR);
         }
     }
@@ -99,6 +113,11 @@ public class AccountController {
             accountService.forgotPassword(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.EMAIL_INVALID)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.EMAIL_INVALID);
+            }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_EMAIL);
         }
     }
@@ -118,6 +137,11 @@ public class AccountController {
             accountService.unlockAccount(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.EMAIL_INVALID)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.EMAIL_INVALID);
+            }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_UNLOCK);
         }
     }
@@ -127,8 +151,8 @@ public class AccountController {
         try {
             Account account = accountService.findById(id).orElseThrow(() -> new Exception(Constants.ACCOUNT_NOTFOUND));
             ModelMapper modelMapper = new ModelMapper();
-            AccountUpdateDto accountCreateDto = modelMapper.map(account, AccountUpdateDto.class);
-            return ResponseEntity.ok(accountCreateDto);
+            AccountDto accountDto = modelMapper.map(account, AccountDto.class);
+            return ResponseEntity.ok(accountDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
         }
@@ -154,7 +178,45 @@ public class AccountController {
             accountService.lockAccount(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.EMAIL_INVALID)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.EMAIL_INVALID);
+            }
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_LOCK);
         }
     }
+
+    @PostMapping("/update-account")
+    public ResponseEntity<?> updateAccount(@RequestParam("id") Long id,
+                                           @RequestParam("username") String username,
+                                           @RequestParam("email") String email,
+                                           @RequestParam("firstName") String firstName,
+                                           @RequestParam("lastName") String lastName,
+                                           @RequestParam("dateOfBirth") Date dateOfBirth,
+                                           @RequestParam("sex") Integer sex,
+                                           @RequestParam("phoneNumber") String phoneNumber,
+                                           @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
+        try {
+            AccountUpdateDto accountUpdateDto = new AccountUpdateDto(id,
+                    username, email, firstName, lastName, dateOfBirth, sex, phoneNumber, imageFiles);
+            Set<ConstraintViolation<AccountUpdateDto>> violations = validator.validate(accountUpdateDto);
+            if (!violations.isEmpty()) {
+                String errorMessage = violations.stream()
+                        .map(ConstraintViolation::getMessage)
+                        .collect(Collectors.joining(", "));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+            }
+            AccountUpdateDto account = accountService.updateAccount(accountUpdateDto);
+            return ResponseEntity.ok(account);
+        } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.ACCOUNT_NOTFOUND)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.ACCOUNT_NOTFOUND);
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.coverstar.dto.AccountCreateDto;
+import com.coverstar.dto.AccountUpdateDto;
 import com.coverstar.dto.LoginDto;
 import com.coverstar.dto.VerifyCodeDto;
 import com.coverstar.entity.Account;
@@ -38,4 +39,6 @@ public interface AccountService {
 	void lockAccount(String usernameOrEmail);
 
 	List<Account> findByUsernameChat(String username);
+
+	AccountUpdateDto updateAccount(AccountUpdateDto accountUpdateDto) throws Exception;
 }

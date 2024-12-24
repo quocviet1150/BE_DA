@@ -1,25 +1,17 @@
 package com.coverstar.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class AccountUpdateDto {
+public class AccountDto {
 
-	@NotBlank(message = "Id is required")
 	private Long id;
-
 	@NotBlank(message = "Username is required")
 	@Length(min = 5, max = 50, message = "Username name must be between 5-100 characters")
 	private String username;
@@ -35,9 +27,8 @@ public class AccountUpdateDto {
 	@NotBlank(message = "lastName is required")
 	@Length(min = 5, max = 255, message = "lastName name must be between 5-255 characters")
 	private String lastName;
-
-	private Date dateOfBirth;
+	private String dateOfBirth;
 	private Integer sex;
 	private String phoneNumber;
-	private MultipartFile imageFiles;
+	private String directoryPath;
 }

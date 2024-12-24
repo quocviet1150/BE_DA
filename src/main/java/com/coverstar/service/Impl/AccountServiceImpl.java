@@ -15,6 +15,7 @@ import com.coverstar.entity.VerifyAccount;
 import com.coverstar.repository.AccountRepository;
 import com.coverstar.service.AccountService;
 import com.coverstar.service.RoleService;
+import com.coverstar.utils.ShopUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -32,6 +33,7 @@ import javax.crypto.SecretKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -312,6 +314,9 @@ public class AccountServiceImpl implements AccountService {
         try {
             EmailOrUser emailOrUser = new EmailOrUser();
             if (usernameOrEmail.contains("@")) {
+                if (!isValidEmail(usernameOrEmail)) {
+                    throw new RuntimeException(Constants.EMAIL_INVALID);
+                }
                 emailOrUser.setEmail(usernameOrEmail);
             } else {
                 emailOrUser.setUsername(usernameOrEmail);
@@ -357,22 +362,31 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByUsernameChat(username);
     }
 
-    private Date getStartOfDay(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    @Override
+    public AccountUpdateDto updateAccount(AccountUpdateDto accountUpdateDto) throws Exception {
+        try {
+            Account account = accountDao.findById(accountUpdateDto.getId())
+                    .orElseThrow(() -> new RuntimeException(Constants.ACCOUNT_NOTFOUND));
+            account.setUsername(accountUpdateDto.getUsername());
+            account.setEmail(accountUpdateDto.getEmail());
+            account.setFirstName(accountUpdateDto.getFirstName());
+            account.setLastName(accountUpdateDto.getLastName());
+            account.setSex(accountUpdateDto.getSex());
+            account.setPhoneNumber(accountUpdateDto.getPhoneNumber());
+            String fullPath = ShopUtil.handleFileUpload(accountUpdateDto.getImageFiles(), "accounts", account.getId());
+            account.setDirectoryPath(fullPath);
+            account.setUpdatedDate(new Date());
+            accountDao.update(account);
+            return accountUpdateDto;
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
     }
 
-    private boolean isSameDay(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(date1);
-        cal2.setTime(date2);
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
     }
 }
