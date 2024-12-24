@@ -7,6 +7,7 @@ import com.coverstar.service.AccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,10 +17,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,6 +30,9 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private javax.validation.Validator validator;
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody AccountCreateDto accountCreateDto, BindingResult bindingResult) {
@@ -196,13 +202,26 @@ public class AccountController {
                                            @RequestParam("email") String email,
                                            @RequestParam("firstName") String firstName,
                                            @RequestParam("lastName") String lastName,
-                                           @RequestParam("dateOfBirth") Date dateOfBirth,
+                                           @RequestParam("dateOfBirth") @DateTimeFormat(pattern = "dd/MM/yyyy") Date dateOfBirth,
                                            @RequestParam("sex") Integer sex,
                                            @RequestParam("phoneNumber") String phoneNumber,
                                            @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
         try {
             AccountUpdateDto accountUpdateDto = new AccountUpdateDto(id,
                     username, email, firstName, lastName, dateOfBirth, sex, phoneNumber, imageFiles);
+
+            if (!accountUpdateDto.isValidFile()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.OVER_CAPACITY);
+            }
+
+            Set<ConstraintViolation<AccountUpdateDto>> violations = validator.validate(accountUpdateDto);
+            if (!violations.isEmpty()) {
+                String errorMessage = violations.stream()
+                        .map(ConstraintViolation::getMessage)
+                        .collect(Collectors.joining(", "));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+            }
+
             AccountUpdateDto account = accountService.updateAccount(accountUpdateDto);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
