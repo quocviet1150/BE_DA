@@ -30,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -367,14 +368,21 @@ public class AccountServiceImpl implements AccountService {
         try {
             Account account = accountDao.findById(accountUpdateDto.getId())
                     .orElseThrow(() -> new RuntimeException(Constants.ACCOUNT_NOTFOUND));
-            account.setUsername(accountUpdateDto.getUsername());
             account.setEmail(accountUpdateDto.getEmail());
             account.setFirstName(accountUpdateDto.getFirstName());
             account.setLastName(accountUpdateDto.getLastName());
             account.setSex(accountUpdateDto.getSex());
             account.setPhoneNumber(accountUpdateDto.getPhoneNumber());
-            String fullPath = ShopUtil.handleFileUpload(accountUpdateDto.getImageFiles(), "accounts", account.getId());
-            account.setDirectoryPath(fullPath);
+            if (accountUpdateDto.getImageFiles() != null && !accountUpdateDto.getImageFiles().isEmpty()) {
+                if (account.getDirectoryPath() != null) {
+                    File oldFile = new File(account.getDirectoryPath());
+                    if (oldFile.exists()) {
+                        oldFile.delete();
+                    }
+                }
+                String fullPath = ShopUtil.handleFileUpload(accountUpdateDto.getImageFiles(), "accounts", account.getId());
+                account.setDirectoryPath(fullPath);
+            }
             account.setUpdatedDate(new Date());
             accountDao.update(account);
             return accountUpdateDto;
