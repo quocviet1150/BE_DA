@@ -47,7 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/assets/**",
                         "/forgot-password/**",
                         "/vnPay/vnpay-payment",
-                        "dashboards/**")
+                        "dashboards/**",
+                        "/products/search/**",
+                        "/unlock-account/**")
                 .permitAll()
                 .antMatchers(
                         "/productTypes/admin/**",

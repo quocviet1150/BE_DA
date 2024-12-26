@@ -368,7 +368,6 @@ public class AccountServiceImpl implements AccountService {
         try {
             Account account = accountDao.findById(accountUpdateDto.getId())
                     .orElseThrow(() -> new RuntimeException(Constants.ACCOUNT_NOTFOUND));
-            account.setEmail(accountUpdateDto.getEmail());
             account.setFirstName(accountUpdateDto.getFirstName());
             account.setLastName(accountUpdateDto.getLastName());
             account.setSex(accountUpdateDto.getSex());

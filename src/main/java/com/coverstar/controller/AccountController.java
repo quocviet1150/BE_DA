@@ -61,10 +61,7 @@ public class AccountController {
     }
 
     @PostMapping("/verify-code")
-    public ResponseEntity<?> verifyCodeAction(@Valid @RequestBody VerifyCodeDto verifyCodeDto, BindingResult result) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
-        }
+    public ResponseEntity<?> verifyCodeAction(@Valid @RequestBody VerifyCodeDto verifyCodeDto) {
         try {
             accountService.verifyCode(verifyCodeDto);
             return ResponseEntity.ok(Constants.VALID_VERIFICATION);
@@ -116,7 +113,7 @@ public class AccountController {
     public ResponseEntity<?> forgotPassword(@PathVariable String usernameOrEmail) {
         try {
             if (StringUtils.isBlank(usernameOrEmail)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.DUPLICATE_USERNAME_EMAIL);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.USERNAME_EMAIL_REQUIRED);
             }
 
             accountService.forgotPassword(usernameOrEmail);
@@ -140,9 +137,8 @@ public class AccountController {
     public ResponseEntity<?> unlockAccount(@PathVariable String usernameOrEmail) {
         try {
             if (StringUtils.isBlank(usernameOrEmail)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.DUPLICATE_USERNAME_EMAIL);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.USERNAME_EMAIL_REQUIRED);
             }
-
             accountService.unlockAccount(usernameOrEmail);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
@@ -181,7 +177,7 @@ public class AccountController {
     public ResponseEntity<?> lockAccount(@PathVariable String usernameOrEmail) {
         try {
             if (StringUtils.isBlank(usernameOrEmail)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.DUPLICATE_USERNAME_EMAIL);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.USERNAME_EMAIL_REQUIRED);
             }
 
             accountService.lockAccount(usernameOrEmail);
@@ -192,14 +188,12 @@ public class AccountController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.EMAIL_INVALID);
             }
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_LOCK);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
 
     @PostMapping("/update-account")
     public ResponseEntity<?> updateAccount(@RequestParam("id") Long id,
-                                           @RequestParam("username") String username,
-                                           @RequestParam("email") String email,
                                            @RequestParam("firstName") String firstName,
                                            @RequestParam("lastName") String lastName,
                                            @RequestParam("dateOfBirth") @DateTimeFormat(pattern = "dd/MM/yyyy") Date dateOfBirth,
@@ -207,8 +201,8 @@ public class AccountController {
                                            @RequestParam("phoneNumber") String phoneNumber,
                                            @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
         try {
-            AccountUpdateDto accountUpdateDto = new AccountUpdateDto(id,
-                    username, email, firstName, lastName, dateOfBirth, sex, phoneNumber, imageFiles);
+            AccountUpdateDto accountUpdateDto = new AccountUpdateDto(id, firstName, lastName, dateOfBirth,
+                    sex, phoneNumber, imageFiles);
 
             if (!accountUpdateDto.isValidFile()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.OVER_CAPACITY);
@@ -233,5 +227,4 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
         }
     }
-
 }

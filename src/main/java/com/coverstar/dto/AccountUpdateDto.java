@@ -21,11 +21,6 @@ public class AccountUpdateDto {
     @NotNull(message = "Username is required")
     private Long id;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email is invalid")
-    @Length(min = 3, max = 100, message = "Email must be between 3 and 100 characters")
-    private String email;
-
     @NotBlank(message = "First name is required")
     @Length(min = 3, max = 100, message = "First name must be between 3 and 255 characters")
     private String firstName;
@@ -44,11 +39,16 @@ public class AccountUpdateDto {
 
     private MultipartFile imageFiles;
 
+
     public boolean isValidFile() {
         if (imageFiles != null) {
             if (imageFiles.getSize() > MAX_FILE_SIZE) {
                 return false;
             }
+        }
+        String contentType = imageFiles.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return false;
         }
         return true;
     }

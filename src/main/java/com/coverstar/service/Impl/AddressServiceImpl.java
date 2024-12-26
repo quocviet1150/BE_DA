@@ -1,5 +1,6 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.constant.Constants;
 import com.coverstar.dto.AddressDto;
 import com.coverstar.entity.Address;
 import com.coverstar.repository.AddressRepository;
@@ -17,13 +18,15 @@ public class AddressServiceImpl implements AddressService {
     private AddressRepository addressRepository;
 
     @Override
-    public Address createOrUpdateAddress(AddressDto addressDto) {
+    public Address createOrUpdateAddress(AddressDto addressDto) throws Exception {
         try {
             Address address = new Address();
             if (addressDto.getId() != null) {
-                address = addressRepository.findById(addressDto.getId()).orElse(null);
+                address = addressRepository.getById(addressDto.getId());
                 if (address != null) {
                     address.setUpdatedDate(new Date());
+                } else {
+                    throw new Exception(Constants.ADDRESS_NOT_FOUND);
                 }
             } else {
                 address.setCreatedDate(new Date());

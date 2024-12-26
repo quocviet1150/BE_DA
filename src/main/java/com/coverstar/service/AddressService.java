@@ -6,7 +6,7 @@ import com.coverstar.entity.Address;
 import java.util.List;
 
 public interface AddressService {
-    Address createOrUpdateAddress(AddressDto addressDto);
+    Address createOrUpdateAddress(AddressDto addressDto) throws Exception;
 
     void deleteAddress(Long id);
 
