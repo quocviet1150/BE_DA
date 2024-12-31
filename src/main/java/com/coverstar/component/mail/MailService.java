@@ -44,5 +44,22 @@ public class MailService {
         logger.info("Success send mail");
     }
 
+    public void sendEmailPurchase(Mail mail) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,
+                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                StandardCharsets.UTF_8.name());
 
+        Context context = new Context();
+        context.setVariables(mail.getModel());
+        String html = templateEngine.process("email-purchase/email-purchase", context);
+
+        helper.setTo(mail.getTo());
+        helper.setText(html, true);
+        helper.setSubject(mail.getSubject());
+        helper.setFrom(mail.getFrom());
+
+        emailSender.send(message);
+        logger.info("Success send mail");
+    }
 }

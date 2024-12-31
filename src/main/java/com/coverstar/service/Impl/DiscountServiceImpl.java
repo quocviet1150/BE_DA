@@ -112,7 +112,7 @@ public class DiscountServiceImpl implements DiscountService {
     public Discount getDiscount(Long id, Integer type) throws Exception {
         try {
             Discount discount = discountRepository.findById(id).orElse(null);
-            if (type == 1 && discount != null && discount.getExpiredDate().after(new Date())) {
+            if (type == 1 && discount != null && discount.getExpiredDate().before(new Date())) {
                 discount.setStatus(false);
                 discountRepository.save(discount);
                 throw new Exception(Constants.DISCOUNT_EXPIRED);

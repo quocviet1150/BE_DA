@@ -154,7 +154,10 @@ public class AccountController {
     @GetMapping("/account/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id) {
         try {
-            Account account = accountService.findById(id).orElseThrow(() -> new Exception(Constants.ACCOUNT_NOTFOUND));
+            Account account = accountService.findById(id);
+            if (account == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
+            }
             ModelMapper modelMapper = new ModelMapper();
             AccountDto accountDto = modelMapper.map(account, AccountDto.class);
             return ResponseEntity.ok(accountDto);
@@ -246,6 +249,16 @@ public class AccountController {
             }
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_EMAIL);
+        }
+    }
+
+    @PostMapping("/send-mail")
+    public  ResponseEntity<?> sendMail() {
+        try {
+            accountService.sendEmail();
+            return ResponseEntity.ok(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
 }

@@ -30,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import javax.mail.MessagingException;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -153,8 +154,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<Account> findById(Long id) {
-        return accountDao.findById(id);
+    public Account findById(Long id) {
+        Account account = accountRepository.findById(id).orElse(null);
+        return account;
     }
 
     public void verifyCode(VerifyCodeDto verifyCodeDto) {
@@ -370,6 +372,26 @@ public class AccountServiceImpl implements AccountService {
             account.setEmail(changeEmailDto.getEmail());
             accountRepository.save(account);
             return changeEmailDto;
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void sendEmail() throws MessagingException {
+        try {
+            Account account = accountRepository.findById(1L).get();
+
+            Map<String, Object> maps = new HashMap<>();
+            maps.put("account", account);
+
+            Mail mail = new Mail();
+            mail.setFrom("postmaster@mg.iteacode.com");
+            mail.setSubject("Thông báo đơn hàng.");
+            mail.setTo(account.getEmail());
+            mail.setModel(maps);
+            mailService.sendEmailPurchase(mail);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

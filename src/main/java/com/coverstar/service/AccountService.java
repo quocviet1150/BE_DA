@@ -7,11 +7,13 @@ import java.util.Optional;
 import com.coverstar.dto.*;
 import com.coverstar.entity.Account;
 
+import javax.mail.MessagingException;
+
 public interface AccountService {
 
 	Account createMember(AccountCreateDto accountDto) throws Exception;
 
-	Optional<Account> findById(Long id);
+	Account findById(Long id);
 
 	void verifyCode(VerifyCodeDto verifyCodeDto);
 
@@ -34,4 +36,6 @@ public interface AccountService {
 	AccountUpdateDto updateAccount(AccountUpdateDto accountUpdateDto) throws Exception;
 
 	ChangeEmailDto changeEmail(ChangeEmailDto changeEmailDto);
+
+	void sendEmail() throws MessagingException;
 }

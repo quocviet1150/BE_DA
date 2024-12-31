@@ -1,5 +1,7 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.component.mail.Mail;
+import com.coverstar.component.mail.MailService;
 import com.coverstar.constant.Constants;
 import com.coverstar.dto.PurchaseDto;
 import com.coverstar.entity.*;
@@ -9,9 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.mail.MessagingException;
+import java.util.*;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -42,6 +43,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     private DiscountService discountService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private MailService mailService;
 
     @Override
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
@@ -96,7 +103,13 @@ public class PurchaseServiceImpl implements PurchaseService {
                 purchase.setDescription(purchaseDto.getDescription());
                 purchases.add(purchase);
             }
-            return purchaseRepository.saveAll(purchases);
+            purchases = purchaseRepository.saveAll(purchases);
+            String orderTitle = "Người gửi đang chuẩn bị hàng.";
+            String mainMail = "Cảm ơn quý khách đã đặt hàng tại VietShop.";
+            String subject = "Đặt hàng thành công.";
+            sendMailPurchase(purchaseDtos.get(0).getUserId(), orderTitle, mainMail, subject);
+
+            return purchases;
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
@@ -188,6 +201,30 @@ public class PurchaseServiceImpl implements PurchaseService {
             } else {
                 userVisits.setVisitCount(userVisits.getVisitCount() + 1);
                 userVisitRepository.save(userVisits);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    private void sendMailPurchase(Long userId, String orderTitle, String mainMail, String subject) throws MessagingException {
+        try {
+            Account account = accountService.findById(userId);
+            if (account != null) {
+                if (account.isNotificationPurchase()) {
+                    Map<String, Object> maps = new HashMap<>();
+                    maps.put("fullName", account.getFirstName() + " " + account.getLastName());
+                    maps.put("orderTitle", orderTitle);
+                    maps.put("mainMail", mainMail);
+
+                    Mail mail = new Mail();
+                    mail.setFrom("postmaster@mg.iteacode.com");
+                    mail.setSubject(subject);
+                    mail.setTo(account.getEmail());
+                    mail.setModel(maps);
+                    mailService.sendEmailPurchase(mail);
+                }
             }
         } catch (Exception e) {
             e.fillInStackTrace();
