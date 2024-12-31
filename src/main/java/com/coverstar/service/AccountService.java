@@ -4,24 +4,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.coverstar.dto.AccountCreateDto;
-import com.coverstar.dto.AccountUpdateDto;
-import com.coverstar.dto.LoginDto;
-import com.coverstar.dto.VerifyCodeDto;
+import com.coverstar.dto.*;
 import com.coverstar.entity.Account;
 
 public interface AccountService {
 
 	Account createMember(AccountCreateDto accountDto) throws Exception;
-	
-	Account createAdmin(AccountCreateDto accountDto);
-	
-	Optional<Account> findByEmail(String email);
 
-	Optional<Account> findByUsername(String username);
-	
 	Optional<Account> findById(Long id);
-	
+
 	void verifyCode(VerifyCodeDto verifyCodeDto);
 
     void changePassword(String username, String newPassword);
@@ -41,4 +32,6 @@ public interface AccountService {
 	List<Account> findByUsernameChat(String username);
 
 	AccountUpdateDto updateAccount(AccountUpdateDto accountUpdateDto) throws Exception;
+
+	ChangeEmailDto changeEmail(ChangeEmailDto changeEmailDto);
 }

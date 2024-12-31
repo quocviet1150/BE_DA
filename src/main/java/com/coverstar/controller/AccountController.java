@@ -227,4 +227,25 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
         }
     }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<?> changeEmail(@Valid @RequestBody ChangeEmailDto changeEmailDto, BindingResult bindingResult) {
+        try {
+            if (bindingResult.hasErrors()) {
+                List<String> errors = bindingResult.getFieldErrors().stream()
+                        .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                        .collect(Collectors.toList());
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            }
+            ChangeEmailDto emailDto = accountService.changeEmail(changeEmailDto);
+            return ResponseEntity.ok(emailDto);
+        } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.ACCOUNT_NOTFOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.ACCOUNT_NOTFOUND);
+            }
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_EMAIL);
+        }
+    }
 }

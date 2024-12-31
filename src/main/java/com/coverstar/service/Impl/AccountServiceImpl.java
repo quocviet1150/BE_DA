@@ -153,35 +153,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createAdmin(AccountCreateDto accountDto) {
-        String email = accountDto.getEmail();
-        String username = accountDto.getUsername();
-        String password = accountDto.getPassword();
-
-        Account account = new Account();
-        account.setEmail(email);
-        account.setUsername(username);
-        account.setPassword(passwordEncoder.encode(password));
-
-        if (roleService.findById(2l).isPresent()) {
-            Role role = roleService.findById(2l).get();
-            account.addRole(role);
-        }
-
-        return accountDao.create(account);
-    }
-
-    @Override
-    public Optional<Account> findByEmail(String email) {
-        return accountDao.findByEmail(email);
-    }
-
-    @Override
-    public Optional<Account> findByUsername(String username) {
-        return accountDao.findByUsername(username);
-    }
-
-    @Override
     public Optional<Account> findById(Long id) {
         return accountDao.findById(id);
     }
@@ -385,6 +356,20 @@ public class AccountServiceImpl implements AccountService {
             account.setUpdatedDate(new Date());
             accountDao.update(account);
             return accountUpdateDto;
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public ChangeEmailDto changeEmail(ChangeEmailDto changeEmailDto) {
+        try {
+            Account account = accountRepository.findById(changeEmailDto.getId())
+                    .orElseThrow(() -> new RuntimeException(Constants.ACCOUNT_NOTFOUND));
+            account.setEmail(changeEmailDto.getEmail());
+            accountRepository.save(account);
+            return changeEmailDto;
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

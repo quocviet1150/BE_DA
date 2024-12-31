@@ -65,7 +65,4 @@ public class AccountDaoImpl implements AccountDao{
 	public Optional<Account> findByUsername(String username) {
 		return accountRepository.findByUsername(username);
 	}
-	
-	
-
 }
