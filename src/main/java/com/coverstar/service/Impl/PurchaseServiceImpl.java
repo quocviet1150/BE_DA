@@ -109,7 +109,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             String orderTitle = "Người gửi xác nhận đơn hàng.";
             String subject = "Đặt hàng thành công.";
             Account account = accountService.findById(purchaseDtos.get(0).getUserId());
-            ShopUtil.sendMailPurchase(account, orderTitle, subject, mailService);
+            ShopUtil.sendMailPurchaseOrDiscount(account, orderTitle, subject, mailService, 1);
 
             return purchases;
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
                 orderTitle = "Người gửi đã xác nhận đơn hàng bị hủy.";
                 subject = "Hủy đơn hàng thành công.";
-            } else if (status == 2){
+            } else if (status == 2) {
                 orderTitle = "Đơn hàng chuẩn bị bàn giao cho đơn vị vận chuyển.";
                 subject = "Đang được chuẩn bị.";
             } else if (status == 3) {
@@ -177,7 +177,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 orderTitle = "Đơn hàng đã được giao thành công.";
                 subject = "Đã giao hàng thành công.";
             }
-            ShopUtil.sendMailPurchase(account, orderTitle, subject, mailService);
+            if (!StringUtils.EMPTY.equals(orderTitle)) {
+                ShopUtil.sendMailPurchaseOrDiscount(account, orderTitle, subject, mailService, 1);
+            }
             purchase.setStatus(status);
             purchase.setUpdatedDate(new Date());
             return purchaseRepository.save(purchase);

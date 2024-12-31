@@ -81,7 +81,7 @@ public class DiscountServiceImpl implements DiscountService {
                     if (discount != null) {
                         accounts.add(account);
                     }
-                    ShopUtil.sendMailDisscount(account, orderTitle, subject, mailService);
+                    ShopUtil.sendMailPurchaseOrDiscount(account, orderTitle, subject, mailService, 2);
                 }
                 discount.setAccounts(accounts);
             }

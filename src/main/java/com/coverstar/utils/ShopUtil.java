@@ -25,10 +25,12 @@ public class ShopUtil {
         return fullPath;
     }
 
-    public static void sendMailPurchase(Account account, String orderTitle, String subject, MailService mailService) throws MessagingException {
+    public static void sendMailPurchaseOrDiscount(Account account, String orderTitle,
+                                        String subject, MailService mailService, Integer type
+    ) throws MessagingException {
         try {
             if (account != null) {
-                if (account.isNotificationPurchase()) {
+                if (account.isNotificationPurchase() && type == 1) {
                     Map<String, Object> maps = new HashMap<>();
                     maps.put("fullName", account.getFirstName() + " " + account.getLastName());
                     maps.put("orderTitle", orderTitle);
@@ -41,17 +43,8 @@ public class ShopUtil {
                     mail.setModel(maps);
                     mailService.sendEmailPurchase(mail);
                 }
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            throw e;
-        }
-    }
 
-    public static void sendMailDisscount(Account account, String orderTitle, String subject, MailService mailService) throws MessagingException {
-        try {
-            if (account != null) {
-                if (account.isNotificationDiscount()) {
+                if (account.isNotificationDiscount() && type == 2) {
                     Map<String, Object> maps = new HashMap<>();
                     maps.put("fullName", account.getFirstName() + " " + account.getLastName());
                     maps.put("orderTitle", orderTitle);
@@ -70,4 +63,5 @@ public class ShopUtil {
             throw e;
         }
     }
+
 }
