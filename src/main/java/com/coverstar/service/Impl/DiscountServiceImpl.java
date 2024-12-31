@@ -1,5 +1,6 @@
 package com.coverstar.service.Impl;
 
+import com.coverstar.component.mail.MailService;
 import com.coverstar.constant.Constants;
 import com.coverstar.entity.Account;
 import com.coverstar.entity.Discount;
@@ -29,14 +30,24 @@ public class DiscountServiceImpl implements DiscountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private MailService mailService;
+
     @Override
-    public Discount createOrUpdateDiscount(Long id, String name, String code,
-                                           String description, BigDecimal percent, MultipartFile imageFile,
-                                           String expiredDate, List<Long> userIds, Integer discountType,
+    public Discount createOrUpdateDiscount(Long id,
+                                           String name,
+                                           String code,
+                                           String description,
+                                           BigDecimal percent,
+                                           MultipartFile imageFile,
+                                           String expiredDate,
+                                           List<Long> userIds,
+                                           Integer discountType,
                                            BigDecimal levelApplied) throws Exception {
         Discount discount = new Discount();
         try {
-
+            String orderTitle = "Có những ưu đãi mới đang chờ đón bạn sử dụng.";
+            String subject = "Thông báo.";
             boolean isCodeExist = id == null
                     ? discountRepository.existsByCode(code)
                     : discountRepository.existsByCodeAndIdNot(code, id);
@@ -70,6 +81,7 @@ public class DiscountServiceImpl implements DiscountService {
                     if (discount != null) {
                         accounts.add(account);
                     }
+                    ShopUtil.sendMailDisscount(account, orderTitle, subject, mailService);
                 }
                 discount.setAccounts(accounts);
             }

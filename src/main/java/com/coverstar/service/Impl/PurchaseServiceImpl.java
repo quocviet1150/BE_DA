@@ -7,6 +7,7 @@ import com.coverstar.dto.PurchaseDto;
 import com.coverstar.entity.*;
 import com.coverstar.repository.*;
 import com.coverstar.service.*;
+import com.coverstar.utils.ShopUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     public List<Purchase> createPurchase(List<PurchaseDto> purchaseDtos) throws Exception {
         List<Purchase> purchases = new ArrayList<>();
         try {
+
             getUserVisits(4);
             for (PurchaseDto purchaseDto : purchaseDtos) {
                 Purchase purchase = new Purchase();
@@ -106,7 +108,8 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchases = purchaseRepository.saveAll(purchases);
             String orderTitle = "Người gửi xác nhận đơn hàng.";
             String subject = "Đặt hàng thành công.";
-            sendMailPurchase(purchaseDtos.get(0).getUserId(), orderTitle, subject);
+            Account account = accountService.findById(purchaseDtos.get(0).getUserId());
+            ShopUtil.sendMailPurchase(account, orderTitle, subject, mailService);
 
             return purchases;
         } catch (Exception e) {
@@ -138,6 +141,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             String orderTitle = StringUtils.EMPTY;
             String subject = StringUtils.EMPTY;
             Purchase purchase = purchaseRepository.findById(id).orElse(null);
+            Account account = accountService.findById(purchase.getUserId());
             if (purchase == null) {
                 throw new Exception(Constants.PURCHASE_NOT_FOUND);
             }
@@ -173,7 +177,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 orderTitle = "Đơn hàng đã được giao thành công.";
                 subject = "Đã giao hàng thành công.";
             }
-            sendMailPurchase(purchase.getUserId(), orderTitle, subject);
+            ShopUtil.sendMailPurchase(account, orderTitle, subject, mailService);
             purchase.setStatus(status);
             purchase.setUpdatedDate(new Date());
             return purchaseRepository.save(purchase);
@@ -219,30 +223,6 @@ public class PurchaseServiceImpl implements PurchaseService {
             } else {
                 userVisits.setVisitCount(userVisits.getVisitCount() + 1);
                 userVisitRepository.save(userVisits);
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            throw e;
-        }
-    }
-
-    private void sendMailPurchase(Long userId, String orderTitle, String subject) throws MessagingException {
-        try {
-            Account account = accountService.findById(userId);
-            if (account != null) {
-                if (account.isNotificationPurchase()) {
-                    Map<String, Object> maps = new HashMap<>();
-                    maps.put("fullName", account.getFirstName() + " " + account.getLastName());
-                    maps.put("orderTitle", orderTitle);
-                    maps.put("mainMail", "Cảm ơn quý khách đã ghé thăm VietShop");
-
-                    Mail mail = new Mail();
-                    mail.setFrom("postmaster@mg.iteacode.com");
-                    mail.setSubject(subject);
-                    mail.setTo(account.getEmail());
-                    mail.setModel(maps);
-                    mailService.sendEmailPurchase(mail);
-                }
             }
         } catch (Exception e) {
             e.fillInStackTrace();
