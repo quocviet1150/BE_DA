@@ -63,6 +63,11 @@ public class PurchaseController {
             Purchase purchase = purchaseService.updateStatus(id, status);
             return ResponseEntity.ok(purchase);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.ERROR_STATUS_UPDATE)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Constants.ERROR_STATUS_UPDATE);
+            }
+
             if (e.getMessage().equals(Constants.PURCHASE_NOT_FOUND)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.PURCHASE_NOT_FOUND);
             }

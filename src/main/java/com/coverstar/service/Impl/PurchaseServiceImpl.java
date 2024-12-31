@@ -104,10 +104,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 purchases.add(purchase);
             }
             purchases = purchaseRepository.saveAll(purchases);
-            String orderTitle = "Người gửi đang chuẩn bị hàng.";
-            String mainMail = "Cảm ơn quý khách đã đặt hàng tại VietShop.";
+            String orderTitle = "Người gửi xác nhận đơn hàng.";
             String subject = "Đặt hàng thành công.";
-            sendMailPurchase(purchaseDtos.get(0).getUserId(), orderTitle, mainMail, subject);
+            sendMailPurchase(purchaseDtos.get(0).getUserId(), orderTitle, subject);
 
             return purchases;
         } catch (Exception e) {
@@ -136,10 +135,17 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public Purchase updateStatus(Long id, Integer status) throws Exception {
         try {
+            String orderTitle = StringUtils.EMPTY;
+            String subject = StringUtils.EMPTY;
             Purchase purchase = purchaseRepository.findById(id).orElse(null);
             if (purchase == null) {
                 throw new Exception(Constants.PURCHASE_NOT_FOUND);
             }
+
+            if (purchase.getStatus() == 4 || purchase.getStatus() == 5) {
+                throw new Exception(Constants.ERROR_STATUS_UPDATE);
+            }
+
             if (status == 5) {
                 Product product = productService.getProductById(purchase.getProduct().getId());
                 if (product.getQuantitySold() < purchase.getQuantity()) {
@@ -154,8 +160,20 @@ public class PurchaseServiceImpl implements PurchaseService {
                 }
                 productDetail.setQuantity(productDetail.getQuantity() + purchase.getQuantity());
                 productDetailRepository.save(productDetail);
-            }
 
+                orderTitle = "Người gửi đã xác nhận đơn hàng bị hủy.";
+                subject = "Hủy đơn hàng thành công.";
+            } else if (status == 2){
+                orderTitle = "Đơn hàng chuẩn bị bàn giao cho đơn vị vận chuyển.";
+                subject = "Đang được chuẩn bị.";
+            } else if (status == 3) {
+                orderTitle = "Đơn hàng đã được bàn giao cho đơn vị vận chuyển.";
+                subject = "Đã bàn giao cho đơn vị vận chuyển.";
+            } else if (status == 4) {
+                orderTitle = "Đơn hàng đã được giao thành công.";
+                subject = "Đã giao hàng thành công.";
+            }
+            sendMailPurchase(purchase.getUserId(), orderTitle, subject);
             purchase.setStatus(status);
             purchase.setUpdatedDate(new Date());
             return purchaseRepository.save(purchase);
@@ -208,7 +226,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
     }
 
-    private void sendMailPurchase(Long userId, String orderTitle, String mainMail, String subject) throws MessagingException {
+    private void sendMailPurchase(Long userId, String orderTitle, String subject) throws MessagingException {
         try {
             Account account = accountService.findById(userId);
             if (account != null) {
@@ -216,7 +234,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                     Map<String, Object> maps = new HashMap<>();
                     maps.put("fullName", account.getFirstName() + " " + account.getLastName());
                     maps.put("orderTitle", orderTitle);
-                    maps.put("mainMail", mainMail);
+                    maps.put("mainMail", "Cảm ơn quý khách đã ghé thăm VietShop");
 
                     Mail mail = new Mail();
                     mail.setFrom("postmaster@mg.iteacode.com");
