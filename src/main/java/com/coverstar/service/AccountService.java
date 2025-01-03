@@ -36,6 +36,4 @@ public interface AccountService {
 	AccountUpdateDto updateAccount(AccountUpdateDto accountUpdateDto) throws Exception;
 
 	ChangeEmailDto changeEmail(ChangeEmailDto changeEmailDto);
-
-	void sendEmail() throws MessagingException;
 }

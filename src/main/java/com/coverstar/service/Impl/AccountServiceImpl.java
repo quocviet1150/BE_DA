@@ -378,26 +378,6 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    @Override
-    public void sendEmail() throws MessagingException {
-        try {
-            Account account = accountRepository.findById(1L).get();
-
-            Map<String, Object> maps = new HashMap<>();
-            maps.put("account", account);
-
-            Mail mail = new Mail();
-            mail.setFrom("postmaster@mg.iteacode.com");
-            mail.setSubject("Thông báo đơn hàng.");
-            mail.setTo(account.getEmail());
-            mail.setModel(maps);
-            mailService.sendEmailPurchase(mail);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            throw e;
-        }
-    }
-
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         Pattern pattern = Pattern.compile(emailRegex);

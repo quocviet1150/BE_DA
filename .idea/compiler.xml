@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="coverstar (1)" />
+        <module name="BE_DA" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -16,6 +17,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="BE_DA" options="-parameters" />
       <module name="coverstar" options="-parameters" />
       <module name="coverstar (1)" options="-parameters" />
     </option>

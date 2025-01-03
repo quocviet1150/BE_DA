@@ -251,14 +251,4 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR_EMAIL);
         }
     }
-
-    @PostMapping("/send-mail")
-    public  ResponseEntity<?> sendMail() {
-        try {
-            accountService.sendEmail();
-            return ResponseEntity.ok(HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
-        }
-    }
 }
