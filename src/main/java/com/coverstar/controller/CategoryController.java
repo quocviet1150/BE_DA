@@ -31,7 +31,7 @@ public class CategoryController {
                                             @RequestParam(value = "file", required = false) MultipartFile imageFiles) {
         try {
             Category category = categoryService.createOrUpdate(
-                    new BrandOrCategoryDto(id, productTypeId, name, status, description, imageFiles));
+                    new BrandOrCategoryDto(id, productTypeId, name, status, description), imageFiles);
             return ResponseEntity.ok(category);
         } catch (Exception e) {
 

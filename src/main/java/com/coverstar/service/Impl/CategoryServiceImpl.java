@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Date;
@@ -36,14 +37,14 @@ public class CategoryServiceImpl implements CategoryService {
     private ProductService productService;
 
     @Override
-    public Category createOrUpdate(BrandOrCategoryDto brandOrCategoryDto) throws Exception {
+    public Category createOrUpdate(BrandOrCategoryDto brandOrCategoryDto, MultipartFile imageFiles) throws Exception {
         try {
             Category category = new Category();
             if (brandOrCategoryDto.getId() != null) {
                 category = categoryRepository.getById(brandOrCategoryDto.getId());
                 category.setUpdatedDate(new Date());
             } else {
-                if (brandOrCategoryDto.getImageFiles() == null || brandOrCategoryDto.getImageFiles().isEmpty()) {
+                if (imageFiles == null || imageFiles.isEmpty()) {
                     throw new Exception(Constants.NOT_IMAGE);
                 }
                 category.setCreatedDate(new Date());
@@ -55,14 +56,14 @@ public class CategoryServiceImpl implements CategoryService {
             category.setStatus(brandOrCategoryDto.getStatus());
             category = categoryRepository.save(category);
 
-            if (brandOrCategoryDto.getImageFiles() != null && !brandOrCategoryDto.getImageFiles().isEmpty()) {
+            if (imageFiles != null && !imageFiles.isEmpty()) {
                 if (category.getDirectoryPath() != null) {
                     File oldFile = new File(category.getDirectoryPath());
                     if (oldFile.exists()) {
                         oldFile.delete();
                     }
                 }
-                String fullPath = ShopUtil.handleFileUpload(brandOrCategoryDto.getImageFiles(), "categories", category.getId());
+                String fullPath = ShopUtil.handleFileUpload(imageFiles, "categories", category.getId());
                 category.setDirectoryPath(fullPath);
             }
 
