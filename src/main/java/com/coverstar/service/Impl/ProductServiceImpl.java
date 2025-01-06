@@ -7,6 +7,7 @@ import com.coverstar.entity.*;
 import com.coverstar.repository.*;
 import com.coverstar.service.CategoryService;
 import com.coverstar.service.ProductService;
+import com.coverstar.service.ProductTypeService;
 import com.coverstar.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,10 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private UserVisitRepository userVisitRepository;
 
+    @Lazy
+    @Autowired
+    private ProductTypeService productTypeService;
+
     @Override
     public Product saveOrUpdateProduct(Long id,
                                        String productName,
@@ -116,7 +121,11 @@ public class ProductServiceImpl implements ProductService {
                 product.setStatus(true);
             }
             product.setProductName(productName);
-            product.setProductTypeId(productTypeId);
+            ProductType productType = productTypeService.getProductType(productTypeId);
+            if (productType == null) {
+                throw new Exception(Constants.PRODUCT_TYPE_NOT_FOUND);
+            }
+            product.setProductType(productType);
             product.setSize(size);
             product.setPrice(price);
             product.setPercentageReduction(percentageReduction);

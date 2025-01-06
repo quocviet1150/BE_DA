@@ -18,12 +18,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "INNER JOIN Image a ON p.id = a.productId " +
             "INNER JOIN ProductDetail pd ON p.id = pd.productId " +
             "INNER JOIN p.shippingMethods sm " +
-            "WHERE (:name IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "INNER JOIN p.productType pt " +
+            "WHERE (:productTypeId IS NULL OR pt.id = :productTypeId) " +
+            "AND (:name IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :name, '%'))) " +
             "AND p.price BETWEEN :minPrice AND :maxPrice " +
             "AND (:brandId IS NULL OR p.brandId = :brandId) " +
             "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
             "AND (COALESCE(:shippingMethodIds, NULL) IS NULL OR sm.id IN :shippingMethodIds) " +
-            "AND (:productTypeId IS NULL OR p.productTypeId = :productTypeId) " +
             "AND a.type = 1 " +
             "AND (:status IS NULL OR p.status = :status) " +
             "AND (:evaluate IS NULL OR p.evaluate >= :evaluate)")
