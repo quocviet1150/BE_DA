@@ -38,6 +38,7 @@ public class Constants {
     public static final String EMAIL_INVALID = "Email is invalid";
     public static final String OVER_CAPACITY = "Over capacity";
     public static final String ERROR_STATUS_UPDATE = "Cannot update status because the order is already completed or canceled.";
+    public static final String PRODUCT_TYPE_NOT_FOUND = "Product Type not found";
 
 
     public static final class Number {

@@ -35,6 +35,10 @@ public class CategoryController {
             return ResponseEntity.ok(category);
         } catch (Exception e) {
 
+            if (e.getMessage().equals(Constants.PRODUCT_TYPE_NOT_FOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.PRODUCT_TYPE_NOT_FOUND);
+            }
+
             if (e.getMessage().equals(Constants.NOT_IMAGE)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Constants.NOT_IMAGE);
             }
@@ -65,6 +69,7 @@ public class CategoryController {
         try {
             return ResponseEntity.ok(categoryService.getCategoryById(id));
         } catch (Exception e) {
+
             if (e.getMessage().equals(Constants.CATEGORY_NOT_FOUND)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.CATEGORY_NOT_FOUND);
             }

@@ -41,6 +41,11 @@ public class BrandController {
             Brand brand = brandService.createOrUpdate(categoryDto);
             return ResponseEntity.ok(brand);
         } catch (Exception e) {
+
+            if (e.getMessage().equals(Constants.PRODUCT_TYPE_NOT_FOUND)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.PRODUCT_TYPE_NOT_FOUND);
+            }
+
             if (e.getMessage().equals(Constants.BRAND_NOT_FOUND)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Constants.BRAND_NOT_FOUND);
             }

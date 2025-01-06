@@ -4,12 +4,15 @@ import com.coverstar.constant.Constants;
 import com.coverstar.dto.BrandOrCategoryDto;
 import com.coverstar.entity.Brand;
 import com.coverstar.entity.Product;
+import com.coverstar.entity.ProductType;
 import com.coverstar.repository.BrandRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.service.BrandService;
 import com.coverstar.service.ProductService;
+import com.coverstar.service.ProductTypeService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -28,8 +31,12 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Lazy
+    @Autowired
+    private ProductTypeService productTypeService;
+
     @Override
-    public Brand createOrUpdate(BrandOrCategoryDto categoryDto) {
+    public Brand createOrUpdate(BrandOrCategoryDto categoryDto) throws Exception {
         try {
             Brand brand = new Brand();
             if (categoryDto.getId() != null) {
@@ -38,7 +45,11 @@ public class BrandServiceImpl implements BrandService {
             } else {
                 brand.setCreatedDate(new Date());
                 brand.setUpdatedDate(new Date());
-                brand.setProductTypeId(categoryDto.getProductTypeId());
+                ProductType productType = productTypeService.getProductType(categoryDto.getProductTypeId());
+                if (productType == null) {
+                    throw new Exception(Constants.PRODUCT_TYPE_NOT_FOUND);
+                }
+                brand.setProductType(productType);
             }
             brand.setName(categoryDto.getName());
             brand.setDescription(categoryDto.getDescription());

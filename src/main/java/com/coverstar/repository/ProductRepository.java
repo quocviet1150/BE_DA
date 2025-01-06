@@ -18,7 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "INNER JOIN Image a ON p.id = a.productId " +
             "INNER JOIN ProductDetail pd ON p.id = pd.productId " +
             "INNER JOIN p.shippingMethods sm " +
-            "WHERE p.productName LIKE CONCAT('%', :name, '%') " +
+            "WHERE (:name IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :name, '%'))) " +
             "AND p.price BETWEEN :minPrice AND :maxPrice " +
             "AND (:brandId IS NULL OR p.brandId = :brandId) " +
             "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +

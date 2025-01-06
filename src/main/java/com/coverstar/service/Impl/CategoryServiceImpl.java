@@ -4,10 +4,12 @@ import com.coverstar.constant.Constants;
 import com.coverstar.dto.BrandOrCategoryDto;
 import com.coverstar.entity.Category;
 import com.coverstar.entity.Product;
+import com.coverstar.entity.ProductType;
 import com.coverstar.repository.CategoryRepository;
 import com.coverstar.repository.ProductRepository;
 import com.coverstar.service.CategoryService;
 import com.coverstar.service.ProductService;
+import com.coverstar.service.ProductTypeService;
 import com.coverstar.utils.ShopUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private ProductService productService;
 
+    @Lazy
+    @Autowired
+    private ProductTypeService productTypeService;
+
     @Override
     public Category createOrUpdate(BrandOrCategoryDto brandOrCategoryDto, MultipartFile imageFiles) throws Exception {
         try {
@@ -44,16 +50,24 @@ public class CategoryServiceImpl implements CategoryService {
                 category = categoryRepository.getById(brandOrCategoryDto.getId());
                 category.setUpdatedDate(new Date());
             } else {
+                ProductType productType = productTypeService.getProductType(brandOrCategoryDto.getProductTypeId());
+
+                if (productType == null) {
+                    throw new Exception(Constants.PRODUCT_TYPE_NOT_FOUND);
+                }
+
                 if (imageFiles == null || imageFiles.isEmpty()) {
                     throw new Exception(Constants.NOT_IMAGE);
                 }
+
                 category.setCreatedDate(new Date());
                 category.setUpdatedDate(new Date());
-                category.setProductTypeId(brandOrCategoryDto.getProductTypeId());
+                category.setProductType(productType);
             }
             category.setName(brandOrCategoryDto.getName());
             category.setDescription(brandOrCategoryDto.getDescription());
             category.setStatus(brandOrCategoryDto.getStatus());
+            category.setDirectoryPath(null);
             category = categoryRepository.save(category);
 
             if (imageFiles != null && !imageFiles.isEmpty()) {
@@ -101,8 +115,8 @@ public class CategoryServiceImpl implements CategoryService {
             String nameValue = name != null ? name : StringUtils.EMPTY;
             Long productTypeIdValue = productTypeId != null ? productTypeId : null;
             Boolean statusValue = status != null ? status : null;
-            Pageable pageable = PageRequest.of(page, size);
-            return categoryRepository.findAllByConditions(productTypeIdValue, nameValue, statusValue, pageable);
+            Pageable pageable = PageRequest.of(page != null ? page : 0, size != null ? size : 10);
+            return categoryRepository.findAllByConditions(productTypeIdValue, statusValue, pageable, nameValue);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;
