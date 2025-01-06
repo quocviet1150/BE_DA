@@ -128,10 +128,10 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/user")
-    public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
-        return oAuth2User.getAttributes();
-    }
+//    @GetMapping("/user")
+//    public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
+//        return oAuth2User.getAttributes();
+//    }
 
     @PostMapping("/unlock-account/{usernameOrEmail}")
     public ResponseEntity<?> unlockAccount(@PathVariable String usernameOrEmail) {

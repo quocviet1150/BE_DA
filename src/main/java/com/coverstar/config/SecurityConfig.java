@@ -49,7 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/vnPay/vnpay-payment",
                         "dashboards/**",
                         "/products/search/**",
-                        "/unlock-account/**")
+                        "/unlock-account/**",
+                        "/categories/getAllCategory/**")
                 .permitAll()
                 .antMatchers(
                         "/productTypes/admin/**",
@@ -64,7 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .oauth2Login();
+//                .oauth2Login()
+        ;
     }
 
     @Bean
