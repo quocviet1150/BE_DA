@@ -1,6 +1,7 @@
 package com.coverstar.service.Impl;
 
 import com.coverstar.constant.Constants;
+import com.coverstar.dto.CreateOrUpdateProduct;
 import com.coverstar.dto.ProductDetailDTO;
 import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.*;
@@ -403,6 +404,63 @@ public class ProductServiceImpl implements ProductService {
             Product product = productRepository.getProductById(id);
             product.setStatus(type);
             return productRepository.save(product);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public Product createOrUpdate(CreateOrUpdateProduct productDto) throws Exception {
+        try {
+            Product product = new Product();
+            if ( productDto != null && productDto.getId() != null) {
+                product = productRepository.getProductById(productDto.getId());
+                product.setUpdatedDate(new Date());
+            } else {
+                if (!FileUtils.isValidFileList(productDto.getImages())) {
+                    throw new Exception(Constants.NOT_IMAGE);
+                }
+                product.setCreatedDate(new Date());
+                product.setUpdatedDate(new Date());
+                product.setStatus(true);
+            }
+            product.setProductName(productDto.getProductName());
+            ProductType productType = productTypeService.getProductType(productDto.getProductTypeId());
+            if (productType == null) {
+                throw new Exception(Constants.PRODUCT_TYPE_NOT_FOUND);
+            }
+            product.setProductType(productType);
+            product.setSize(productDto.getSize());
+            product.setPrice(productDto.getPrice());
+            product.setPercentageReduction(productDto.getPercentageReduction());
+            product.setBrandId(productDto.getBrandId());
+            product.setCategoryId(productDto.getCategoryId());
+            product.setStatus(productDto.getStatus());
+
+            List<ShippingMethod> shippingMethods = shippingMethodRepository.findAllById(
+                    productDto.getShippingMethodIds().stream().map(Long::parseLong).collect(Collectors.toList())
+            );
+            product.setShippingMethods(new HashSet<>(shippingMethods));
+            product.setDescription(productDto.getDescription());
+            if (StringUtils.isNotEmpty(productDto.getImageIdsToRemove())) {
+                List<Long> imageIdsToRemoveDT = Arrays.stream(productDto.getImageIdsToRemove().split(","))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+                if (!imageIdsToRemoveDT.isEmpty()) {
+                    for (Long imageId : imageIdsToRemoveDT) {
+                        Image image = imageRepository.findImageById(imageId);
+                        File file = new File(image.getDirectoryPath());
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        imageRepository.deleteById(imageId);
+                    }
+                }
+            }
+            product = productRepository.save(product);
+            saveProductDetails(product, productDto.getProductDetailDTOS(), productDto.getListProductDetailIdRemove());
+            return saveImageProduct(productDto.getImages(), product);
         } catch (Exception e) {
             e.fillInStackTrace();
             throw e;

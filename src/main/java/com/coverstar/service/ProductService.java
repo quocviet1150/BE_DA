@@ -1,5 +1,6 @@
 package com.coverstar.service;
 
+import com.coverstar.dto.CreateOrUpdateProduct;
 import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.Product;
 import org.springframework.util.MultiValueMap;
@@ -34,4 +35,6 @@ public interface ProductService {
     void deleteProductById(Long id) throws Exception;
 
     Product updateStatus(Long id, Boolean type);
+
+    Product createOrUpdate(CreateOrUpdateProduct createOrUpdateProduct) throws Exception;
 }

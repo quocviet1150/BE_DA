@@ -1,7 +1,7 @@
 package com.coverstar.controller;
 
 import com.coverstar.constant.Constants;
-import com.coverstar.dto.ImageUploadRequest;
+import com.coverstar.dto.CreateOrUpdateProduct;
 import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.Product;
 import com.coverstar.service.ProductService;
@@ -113,15 +113,12 @@ public class ProductController {
     }
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, Object>> uploadMultipleImages(@ModelAttribute ImageUploadRequest requestData) {
+    public ResponseEntity<?> uploadMultipleImages(@ModelAttribute CreateOrUpdateProduct requestData) {
         try {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Upload thành công!");
-            return ResponseEntity.ok(response);
-
+            Product product = productService.createOrUpdate(requestData);
+            return ResponseEntity.ok(product);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("error", "Lỗi khi xử lý dữ liệu!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
         }
     }
 }
