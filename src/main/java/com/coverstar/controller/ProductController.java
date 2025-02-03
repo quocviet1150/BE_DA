@@ -1,26 +1,21 @@
 package com.coverstar.controller;
 
 import com.coverstar.constant.Constants;
+import com.coverstar.dto.ImageUploadRequest;
 import com.coverstar.dto.SearchProductDto;
 import com.coverstar.entity.Product;
 import com.coverstar.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping("/products")
@@ -47,7 +42,6 @@ public class ProductController {
                                                    @RequestParam("categoryId") Long categoryId,
                                                    @RequestParam("status") Boolean status) {
         try {
-
             Product product = productService.saveOrUpdateProduct(
                     id,
                     productName,
@@ -115,6 +109,19 @@ public class ProductController {
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+        }
+    }
+
+    @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> uploadMultipleImages(@ModelAttribute ImageUploadRequest requestData) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Upload thành công!");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Lỗi khi xử lý dữ liệu!"));
         }
     }
 }
