@@ -192,7 +192,7 @@ public class ProductServiceImpl implements ProductService {
                     .collect(Collectors.toList());
             for (Long id : productDetailIdRemove) {
                 ProductDetail productDetail = productDetailRepository.findById(id)
-                        .orElseThrow(() -> new Exception("ProductDetail not found"));
+                        .orElseThrow(() -> new Exception(Constants.PRODUCT_DETAIL_NOT_FOUND));
                 File file = new File(productDetail.getDirectoryPath());
                 if (file.exists()) {
                     file.delete();
@@ -206,7 +206,7 @@ public class ProductServiceImpl implements ProductService {
 
             if (productDetailDTO.getId() != null) {
                 productDetail = productDetailRepository.findById(productDetailDTO.getId())
-                        .orElseThrow(() -> new Exception("ProductDetail not found"));
+                        .orElseThrow(() -> new Exception(Constants.PRODUCT_DETAIL_NOT_FOUND));
                 productDetail.setUpdatedDate(new Date());
             } else {
                 productDetail = new ProductDetail();

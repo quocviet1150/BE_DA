@@ -116,7 +116,13 @@ public class ProductController {
             Product product = productService.createOrUpdate(createOrUpdateProduct);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+            return switch (e.getMessage()) {
+                case Constants.NOT_IMAGE,
+                        Constants.PRODUCT_TYPE_NOT_FOUND,
+                        Constants.PRODUCT_DETAIL_NOT_FOUND ->
+                        ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+            };
         }
     }
 }
