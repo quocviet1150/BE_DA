@@ -19,18 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,99 +62,99 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductTypeService productTypeService;
 
-    @Override
-    public Product saveOrUpdateProduct(Long id,
-                                       String productName,
-                                       Long productTypeId,
-                                       String size,
-                                       BigDecimal price,
-                                       Float percentageReduction,
-                                       String description,
-                                       List<MultipartFile> imageFiles,
-                                       String imageIdsToRemove,
-                                       MultiValueMap<String, String> productDetailsParams,
-                                       List<MultipartFile> productDetailsFiles,
-                                       String listProductDetailIdRemove,
-                                       List<String> shippingMethodIds,
-                                       Long brandId,
-                                       Long categoryId,
-                                       Boolean status) throws Exception {
-        try {
-
-            List<ProductDetailDTO> productDetails = new ArrayList<>();
-            int i = 0;
-            while (productDetailsParams.containsKey("productDetails[" + i + "].nameDT")) {
-                Long idDT = null;
-                if (StringUtils.isNotEmpty(productDetailsParams.getFirst("productDetails[" + i + "].idDT"))) {
-                    idDT = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].idDT")));
-                }
-                String name = productDetailsParams.getFirst("productDetails[" + i + "].nameDT");
-                Long quantity = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].quantityDT")));
-                BigDecimal priceDT = new BigDecimal(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].priceDT")));
-                Float percentageReductionDT = Float.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].percentageReductionDT")));
-                MultipartFile imageFile = (productDetailsFiles != null && productDetailsFiles.size() > i) ? productDetailsFiles.get(i) : null;
-                String descriptionDT = productDetailsParams.getFirst("productDetails[" + i + "].descriptionDT");
-                Integer type = Integer.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].typeDT")));
-
-                ProductDetailDTO productDetailDTO = new ProductDetailDTO(idDT, name, quantity, priceDT,
-                        percentageReductionDT, imageFile, descriptionDT, type);
-                productDetails.add(productDetailDTO);
-                i++;
-            }
-
-            Product product = new Product();
-            if (id != null) {
-                product = productRepository.getProductById(id);
-                product.setUpdatedDate(new Date());
-            } else {
-                if (!FileUtils.isValidFileList(imageFiles)) {
-                    throw new Exception(Constants.NOT_IMAGE);
-                }
-                product.setCreatedDate(new Date());
-                product.setUpdatedDate(new Date());
-                product.setStatus(true);
-            }
-            product.setProductName(productName);
-            ProductType productType = productTypeService.getProductType(productTypeId);
-            if (productType == null) {
-                throw new Exception(Constants.PRODUCT_TYPE_NOT_FOUND);
-            }
-            product.setProductType(productType);
-            product.setSize(size);
-            product.setPrice(price);
-            product.setPercentageReduction(percentageReduction);
-            product.setBrandId(brandId);
-            product.setCategoryId(categoryId);
-            product.setStatus(status);
-
-            List<ShippingMethod> shippingMethods = shippingMethodRepository.findAllById(
-                    shippingMethodIds.stream().map(Long::parseLong).collect(Collectors.toList())
-            );
-            product.setShippingMethods(new HashSet<>(shippingMethods));
-            product.setDescription(description);
-            if (StringUtils.isNotEmpty(imageIdsToRemove)) {
-                List<Long> imageIdsToRemoveDT = Arrays.stream(imageIdsToRemove.split(","))
-                        .map(Long::parseLong)
-                        .collect(Collectors.toList());
-                if (!imageIdsToRemoveDT.isEmpty()) {
-                    for (Long imageId : imageIdsToRemoveDT) {
-                        Image image = imageRepository.findImageById(imageId);
-                        File file = new File(image.getDirectoryPath());
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        imageRepository.deleteById(imageId);
-                    }
-                }
-            }
-            product = productRepository.save(product);
-            saveProductDetails(product, productDetails, listProductDetailIdRemove);
-            return saveImageProduct(imageFiles, product);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            throw e;
-        }
-    }
+//    @Override
+//    public Product saveOrUpdateProduct(Long id,
+//                                       String productName,
+//                                       Long productTypeId,
+//                                       String size,
+//                                       BigDecimal price,
+//                                       Float percentageReduction,
+//                                       String description,
+//                                       List<MultipartFile> imageFiles,
+//                                       String imageIdsToRemove,
+//                                       MultiValueMap<String, String> productDetailsParams,
+//                                       List<MultipartFile> productDetailsFiles,
+//                                       String listProductDetailIdRemove,
+//                                       List<String> shippingMethodIds,
+//                                       Long brandId,
+//                                       Long categoryId,
+//                                       Boolean status) throws Exception {
+//        try {
+//
+//            List<ProductDetailDTO> productDetails = new ArrayList<>();
+//            int i = 0;
+//            while (productDetailsParams.containsKey("productDetails[" + i + "].nameDT")) {
+//                Long idDT = null;
+//                if (StringUtils.isNotEmpty(productDetailsParams.getFirst("productDetails[" + i + "].idDT"))) {
+//                    idDT = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].idDT")));
+//                }
+//                String name = productDetailsParams.getFirst("productDetails[" + i + "].nameDT");
+//                Long quantity = Long.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].quantityDT")));
+//                BigDecimal priceDT = new BigDecimal(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].priceDT")));
+//                Float percentageReductionDT = Float.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].percentageReductionDT")));
+//                MultipartFile imageFile = (productDetailsFiles != null && productDetailsFiles.size() > i) ? productDetailsFiles.get(i) : null;
+//                String descriptionDT = productDetailsParams.getFirst("productDetails[" + i + "].descriptionDT");
+//                Integer type = Integer.valueOf(Objects.requireNonNull(productDetailsParams.getFirst("productDetails[" + i + "].typeDT")));
+//
+//                ProductDetailDTO productDetailDTO = new ProductDetailDTO(idDT, name, quantity, priceDT,
+//                        percentageReductionDT, imageFile, descriptionDT, type);
+//                productDetails.add(productDetailDTO);
+//                i++;
+//            }
+//
+//            Product product = new Product();
+//            if (id != null) {
+//                product = productRepository.getProductById(id);
+//                product.setUpdatedDate(new Date());
+//            } else {
+//                if (!FileUtils.isValidFileList(imageFiles)) {
+//                    throw new Exception(Constants.NOT_IMAGE);
+//                }
+//                product.setCreatedDate(new Date());
+//                product.setUpdatedDate(new Date());
+//                product.setStatus(true);
+//            }
+//            product.setProductName(productName);
+//            ProductType productType = productTypeService.getProductType(productTypeId);
+//            if (productType == null) {
+//                throw new Exception(Constants.PRODUCT_TYPE_NOT_FOUND);
+//            }
+//            product.setProductType(productType);
+//            product.setSize(size);
+//            product.setPrice(price);
+//            product.setPercentageReduction(percentageReduction);
+//            product.setBrandId(brandId);
+//            product.setCategoryId(categoryId);
+//            product.setStatus(status);
+//
+//            List<ShippingMethod> shippingMethods = shippingMethodRepository.findAllById(
+//                    shippingMethodIds.stream().map(Long::parseLong).collect(Collectors.toList())
+//            );
+//            product.setShippingMethods(new HashSet<>(shippingMethods));
+//            product.setDescription(description);
+//            if (StringUtils.isNotEmpty(imageIdsToRemove)) {
+//                List<Long> imageIdsToRemoveDT = Arrays.stream(imageIdsToRemove.split(","))
+//                        .map(Long::parseLong)
+//                        .collect(Collectors.toList());
+//                if (!imageIdsToRemoveDT.isEmpty()) {
+//                    for (Long imageId : imageIdsToRemoveDT) {
+//                        Image image = imageRepository.findImageById(imageId);
+//                        File file = new File(image.getDirectoryPath());
+//                        if (file.exists()) {
+//                            file.delete();
+//                        }
+//                        imageRepository.deleteById(imageId);
+//                    }
+//                }
+//            }
+//            product = productRepository.save(product);
+//            saveProductDetails(product, productDetails, listProductDetailIdRemove);
+//            return saveImageProduct(imageFiles, product);
+//        } catch (Exception e) {
+//            e.fillInStackTrace();
+//            throw e;
+//        }
+//    }
 
     private Product saveImageProduct(List<MultipartFile> imageFiles, Product product) throws Exception {
         try {

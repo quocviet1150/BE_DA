@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/products")
@@ -24,49 +22,49 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/admin/createOrUpdateProduct")
-    public ResponseEntity<?> createOrUpdateProduct(@RequestParam(value = "id", required = false) Long id,
-                                                   @RequestParam("productName") String productName,
-                                                   @RequestParam("productTypeId") Long productTypeId,
-                                                   @RequestParam("size") String size,
-                                                   @RequestParam("price") BigDecimal price,
-                                                   @RequestParam("percentageReduction") Float percentageReduction,
-                                                   @RequestParam(value = "description", required = false) String description,
-                                                   @RequestParam("file") List<MultipartFile> imageFiles,
-                                                   @RequestParam(value = "imageIdsToRemove", required = false) String imageIdsToRemove,
-                                                   @RequestParam MultiValueMap<String, String> productDetailsParams,
-                                                   @RequestParam(value = "productDetailsFiles", required = false) List<MultipartFile> productDetailsFiles,
-                                                   @RequestParam(value = "listProductDetailIdRemove", required = false) String listProductDetailIdRemove,
-                                                   @RequestParam("shippingMethodIds") List<String> shippingMethodIds,
-                                                   @RequestParam("brandId") Long brandId,
-                                                   @RequestParam("categoryId") Long categoryId,
-                                                   @RequestParam("status") Boolean status) {
-        try {
-            Product product = productService.saveOrUpdateProduct(
-                    id,
-                    productName,
-                    productTypeId,
-                    size,
-                    price,
-                    percentageReduction,
-                    description,
-                    imageFiles,
-                    imageIdsToRemove,
-                    productDetailsParams,
-                    productDetailsFiles,
-                    listProductDetailIdRemove,
-                    shippingMethodIds,
-                    brandId,
-                    categoryId,
-                    status);
-            return ResponseEntity.ok(product);
-        } catch (Exception e) {
-            if (Objects.equals(e.getMessage(), "ProductDetail not found")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ProductDetail not found");
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
-        }
-    }
+//    @PostMapping("/admin/createOrUpdateProduct")
+//    public ResponseEntity<?> createOrUpdateProduct(@RequestParam(value = "id", required = false) Long id,
+//                                                   @RequestParam("productName") String productName,
+//                                                   @RequestParam("productTypeId") Long productTypeId,
+//                                                   @RequestParam("size") String size,
+//                                                   @RequestParam("price") BigDecimal price,
+//                                                   @RequestParam("percentageReduction") Float percentageReduction,
+//                                                   @RequestParam(value = "description", required = false) String description,
+//                                                   @RequestParam("file") List<MultipartFile> imageFiles,
+//                                                   @RequestParam(value = "imageIdsToRemove", required = false) String imageIdsToRemove,
+//                                                   @RequestParam MultiValueMap<String, String> productDetailsParams,
+//                                                   @RequestParam(value = "productDetailsFiles", required = false) List<MultipartFile> productDetailsFiles,
+//                                                   @RequestParam(value = "listProductDetailIdRemove", required = false) String listProductDetailIdRemove,
+//                                                   @RequestParam("shippingMethodIds") List<String> shippingMethodIds,
+//                                                   @RequestParam("brandId") Long brandId,
+//                                                   @RequestParam("categoryId") Long categoryId,
+//                                                   @RequestParam("status") Boolean status) {
+//        try {
+//            Product product = productService.saveOrUpdateProduct(
+//                    id,
+//                    productName,
+//                    productTypeId,
+//                    size,
+//                    price,
+//                    percentageReduction,
+//                    description,
+//                    imageFiles,
+//                    imageIdsToRemove,
+//                    productDetailsParams,
+//                    productDetailsFiles,
+//                    listProductDetailIdRemove,
+//                    shippingMethodIds,
+//                    brandId,
+//                    categoryId,
+//                    status);
+//            return ResponseEntity.ok(product);
+//        } catch (Exception e) {
+//            if (Objects.equals(e.getMessage(), "ProductDetail not found")) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ProductDetail not found");
+//            }
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
+//        }
+//    }
 
     @GetMapping("/search")
     public ResponseEntity<List<Product>> search(@RequestBody @Valid SearchProductDto searchProductDto) {
@@ -112,10 +110,10 @@ public class ProductController {
         }
     }
 
-    @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadMultipleImages(@ModelAttribute CreateOrUpdateProduct requestData) {
+    @PostMapping(value = "/admin/createOrUpdate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadMultipleImages(@ModelAttribute CreateOrUpdateProduct createOrUpdateProduct) {
         try {
-            Product product = productService.createOrUpdate(requestData);
+            Product product = productService.createOrUpdate(createOrUpdateProduct);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Constants.ERROR);
