@@ -69,7 +69,7 @@ public class DiscountServiceImpl implements DiscountService {
             }
             discount.setName(name);
             discount.setCode(code);
-            discount.setPercent(percent);
+            discount.setDiscountPercent(percent);
             discount.setDescription(description);
             discount.setExpiredDate(DateUtill.parseDate(expiredDate));
             discount.setDiscountType(discountType);

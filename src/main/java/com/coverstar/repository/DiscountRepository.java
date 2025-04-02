@@ -26,6 +26,6 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
     boolean existsByCodeAndIdNot(String name, Long id);
 
-    @Query("SELECT a.percent FROM Discount a WHERE a.code = :code")
+    @Query("SELECT a.discountPercent FROM Discount a WHERE a.code = :code")
     Long findByCode(String code);
 }

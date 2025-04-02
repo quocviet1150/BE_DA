@@ -22,7 +22,7 @@ public class Discount {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, columnDefinition = "BIT")
     private Boolean status;
 
     @Column(name = "code", nullable = false)
@@ -34,8 +34,8 @@ public class Discount {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "percent")
-    private BigDecimal percent;
+    @Column(name = "discount_percent")
+    private BigDecimal discountPercent;
 
     @Column(name = "created_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
